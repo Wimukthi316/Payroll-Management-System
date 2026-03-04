@@ -250,7 +250,7 @@ export default function Assets() {
             Register, maintain, transfer, and dispose of company assets.
           </p>
         </div>
-        <button className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-sm shadow-indigo-200 transition-colors">
+        <button className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-md shadow-indigo-200/60 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-200/80 transition-all duration-200">
           <Plus size={16} />
           {addButtonLabels[activeTab]}
         </button>
@@ -258,30 +258,41 @@ export default function Assets() {
 
       {/* ── Summary Chips ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {TABS.map(({ key, label, icon: Icon }) => (
-          <div key={key} className="bg-white border border-slate-200 rounded-xl px-4 py-3 flex items-center gap-3">
-            <Icon size={18} className="text-indigo-500 shrink-0" />
-            <div>
-              <p className="text-xs text-slate-400">{label}</p>
-              <p className="text-lg font-bold text-slate-800">{loading ? '...' : data[key]?.length}</p>
+        {[
+          { key: 'assets',      label: 'All Assets',  icon: Package,       gradient: 'from-indigo-50 to-indigo-100/50',  iconCl: 'text-indigo-500' },
+          { key: 'maintenance', label: 'Maintenance',  icon: Wrench,        gradient: 'from-amber-50 to-amber-100/50',    iconCl: 'text-amber-500'  },
+          { key: 'transfers',   label: 'Transfers',    icon: ArrowRightLeft, gradient: 'from-teal-50 to-teal-100/50',      iconCl: 'text-teal-500'   },
+          { key: 'disposals',   label: 'Disposals',    icon: Trash2,        gradient: 'from-rose-50 to-rose-100/50',      iconCl: 'text-rose-500'   },
+        ].map(({ key, label, icon: Icon, gradient, iconCl }) => (
+          <button
+            key={key}
+            onClick={() => { setActiveTab(key); setSearch(''); }}
+            className={`bg-gradient-to-br ${gradient} border border-slate-100/80 rounded-2xl px-4 py-3 flex items-center gap-3 text-left shadow-[0_4px_16px_rgb(0,0,0,0.03)] hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 ${ activeTab === key ? 'ring-2 ring-indigo-300/60' : '' }`}
+          >
+            <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-sm shrink-0">
+              <Icon size={16} className={iconCl} />
             </div>
-          </div>
+            <div>
+              <p className="text-[11px] text-slate-400 font-medium">{label}</p>
+              <p className="text-xl font-bold text-slate-800 leading-tight">{loading ? '...' : data[key]?.length}</p>
+            </div>
+          </button>
         ))}
       </div>
 
       {/* ── Tab Bar ── */}
-      <div className="flex gap-1 bg-slate-100 p-1 rounded-xl w-full overflow-x-auto">
+      <div className="flex gap-1 bg-slate-100/80 border border-slate-200/60 p-1 rounded-2xl w-full overflow-x-auto shadow-inner">
         {TABS.map(({ key, label, icon: Icon }) => (
           <button
             key={key}
             onClick={() => { setActiveTab(key); setSearch(''); }}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all whitespace-nowrap ${
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-[13px] font-semibold rounded-xl transition-all duration-200 whitespace-nowrap ${
               activeTab === key
-                ? 'bg-white text-indigo-600 shadow-sm'
-                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                ? 'bg-white text-indigo-600 shadow-md shadow-slate-200/80 scale-[0.99]'
+                : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
             }`}
           >
-            <Icon size={15} />
+            <Icon size={14} />
             {label}
           </button>
         ))}
@@ -311,7 +322,7 @@ export default function Assets() {
       </div>
 
       {/* ── Table ── */}
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-slate-100 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.05)] overflow-hidden">
         <div className="overflow-x-auto">
           {activeTab === 'assets'      && <AssetsTable      data={filtered} loading={loading} />}
           {activeTab === 'maintenance' && <MaintenanceTable data={filtered} loading={loading} />}

@@ -55,7 +55,7 @@ export default function Employees() {
             Manage employee profiles, roles, and salary information.
           </p>
         </div>
-        <button className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-sm shadow-indigo-200 transition-colors">
+        <button className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-md shadow-indigo-200/60 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-200/80 transition-all duration-200">
           <Plus size={16} />
           Add Employee
         </button>
@@ -89,7 +89,7 @@ export default function Employees() {
       )}
 
       {/* ── Table ── */}
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-slate-100 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.05)] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -123,9 +123,24 @@ export default function Employees() {
                   <tr key={emp._id} className="hover:bg-slate-50 transition-colors group">
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                          {emp.firstName?.[0]}{emp.lastName?.[0]}
-                        </div>
+                        {(() => {
+                          const AVATARS = [
+                            'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80',
+                            'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80',
+                            'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80',
+                            'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80',
+                            'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80',
+                            'https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80',
+                          ];
+                          const idx = filtered.indexOf(emp) % AVATARS.length;
+                          return (
+                            <img
+                              src={AVATARS[idx]}
+                              alt={`${emp.firstName} ${emp.lastName}`}
+                              className="w-8 h-8 rounded-full object-cover ring-2 ring-slate-100 shrink-0"
+                            />
+                          );
+                        })()}
                         <div>
                           <p className="font-semibold text-slate-800">{emp.firstName} {emp.lastName}</p>
                           <p className="text-xs text-slate-400">{emp.email}</p>
@@ -178,8 +193,8 @@ export default function Employees() {
 
         {/* ── Table Footer ── */}
         {!loading && filtered.length > 0 && (
-          <div className="px-5 py-3 border-t border-slate-100 flex items-center justify-between">
-            <p className="text-xs text-slate-400">Showing {filtered.length} of {employees.length} employees</p>
+          <div className="px-5 py-3.5 border-t border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <p className="text-xs text-slate-400">Showing <span className="font-semibold text-slate-600">{filtered.length}</span> of <span className="font-semibold text-slate-600">{employees.length}</span> employees</p>
             <div className="flex gap-1">
               <button className="px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition disabled:opacity-40" disabled>
                 Previous

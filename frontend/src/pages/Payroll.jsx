@@ -89,22 +89,22 @@ export default function Payroll() {
         </div>
         <button
           onClick={fetchData}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 text-sm font-semibold rounded-xl shadow-sm hover:shadow transition-all duration-200"
         >
-          <RefreshCw size={15} />
+          <RefreshCw size={15} className="text-slate-400" />
           Refresh
         </button>
       </div>
 
       {/* ── Generate Payroll Form ── */}
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-            <Plus size={16} className="text-indigo-600" />
+      <div className="bg-white border border-slate-100 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.05)] p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center shadow-md shadow-indigo-200">
+            <Plus size={16} className="text-white" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-slate-800">Generate Payroll</h3>
-            <p className="text-xs text-slate-400">Auto-calculate EPF, ETF, PAYE tax, and net salary</p>
+            <h3 className="text-[13px] font-bold text-slate-800">Generate Payroll</h3>
+            <p className="text-[11px] text-slate-400">Auto-calculate EPF, ETF, PAYE tax, and net salary</p>
           </div>
         </div>
 
@@ -162,7 +162,7 @@ export default function Payroll() {
             <button
               type="submit"
               disabled={generating}
-              className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white text-sm font-semibold rounded-xl shadow-sm shadow-indigo-200 transition-colors whitespace-nowrap"
+              className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white text-sm font-bold rounded-xl shadow-md shadow-indigo-200/70 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-200/90 transition-all duration-200 whitespace-nowrap"
             >
               {generating ? 'Calculating...' : 'Generate'}
             </button>
@@ -196,7 +196,7 @@ export default function Payroll() {
       </div>
 
       {/* ── Payroll Table ── */}
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-slate-100 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.05)] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
