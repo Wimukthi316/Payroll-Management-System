@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import {
   UserPlus, Search, Pencil, Trash2, X, ChevronUp, ChevronDown,
   Mail, Phone, Briefcase, Building2, Calendar, DollarSign, Save,
@@ -126,9 +127,9 @@ function EmployeeModal({ open, onClose, onSave, initial, saving }) {
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6" onClick={onClose}>
-      <div className="relative w-full max-w-full sm:max-w-lg md:max-w-3xl bg-slate-900 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] sm:max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
+      <div className="relative w-full max-w-full sm:max-w-lg md:max-w-3xl bg-slate-900 rounded-2xl shadow-2xl flex flex-col max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
 
         {/* ── Sticky Header ── */}
         <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-slate-700/60">
@@ -157,8 +158,8 @@ function EmployeeModal({ open, onClose, onSave, initial, saving }) {
         </div>
 
         {/* ── Scrollable Form Area ── */}
-        <form id="employee-form" onSubmit={handleSubmit} noValidate className="flex flex-col flex-1 overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-y-auto p-2">
+        <form id="employee-form" onSubmit={handleSubmit} noValidate className="flex flex-col flex-1 overflow-hidden min-h-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-y-auto p-2 min-h-0">
             <SectionDivider label="Identity" />
             <EField name="employeeId" label="Employee ID" icon={Briefcase} required form={form} errors={errors} onChange={handleChange} />
             <EField name="role" label="Role" options={['Admin', 'HR', 'Accountant']} required form={form} errors={errors} onChange={handleChange} />
@@ -194,17 +195,17 @@ function EmployeeModal({ open, onClose, onSave, initial, saving }) {
 
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
 /* ── Delete Confirm ────────────────────────────────────────────────────────── */
 function DeleteModal({ employee, onClose, onConfirm, loading }) {
   if (!employee) return null;
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-sm p-6 animate-fade-in-up text-center" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={onClose}>
+      <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-sm p-6 animate-fade-in-up text-center" onClick={(e) => e.stopPropagation()} style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
         <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(239,68,68,0.1)' }}>
           <AlertTriangle size={24} className="text-red-400" />
         </div>
@@ -219,7 +220,8 @@ function DeleteModal({ employee, onClose, onConfirm, loading }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
