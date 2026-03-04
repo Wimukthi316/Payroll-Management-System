@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import {
   Package, Wrench, ArrowLeftRight, Trash2,
   Plus, Search, X, Save, AlertTriangle, ChevronDown,
-  Calendar, DollarSign, MapPin, User,
+  Calendar, DollarSign, MapPin, User, Briefcase, TrendingDown,
 } from 'lucide-react';
 import { assetAPI, maintenanceAPI, transferAPI, disposalAPI } from '../services/api';
 

@@ -31,43 +31,94 @@ function SkeletonRow() {
   );
 }
 
-/* ── Reusable modal field ──────────────────────────────────────────────────── */
-function ModalField({ name, label, type = 'text', icon: Icon, required, options, form, onChange }) {
+/* ── Field primitives ─────────────────────────────────────────────────────── */
+const FIELD_BASE = {
+  background: 'rgba(255,255,255,0.04)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  color: 'rgba(255,255,255,0.85)',
+  borderRadius: 10,
+  outline: 'none',
+  width: '100%',
+  padding: '9px 12px',
+  fontSize: 14,
+  transition: 'border-color 0.15s, box-shadow 0.15s',
+};
+const FIELD_FOCUS = { borderColor: 'rgba(99,102,241,0.6)', boxShadow: '0 0 0 3px rgba(99,102,241,0.15)' };
+const FIELD_ERROR = { borderColor: 'rgba(239,68,68,0.5)', boxShadow: '0 0 0 3px rgba(239,68,68,0.1)' };
+
+function EField({ name, label, type = 'text', icon: Icon, required, options, half = true, form, errors, onChange }) {
+  const hasErr = !!errors?.[name];
+  const style  = { ...FIELD_BASE, ...(hasErr ? FIELD_ERROR : {}) };
   return (
-    <div>
-      <label className="label">{label}</label>
+    <div className={half ? '' : 'sm:col-span-2'}>
+      <label className="block text-xs font-semibold mb-1.5" style={{ color: hasErr ? '#f87171' : 'rgba(255,255,255,0.5)' }}>
+        {label}{required && <span className="ml-0.5" style={{ color: '#f87171' }}>*</span>}
+      </label>
       {options ? (
-        <select name={name} value={form[name] ?? ''} onChange={onChange} className="input" required={required}>
-          {options.map((o) => <option key={o}>{o}</option>)}
-        </select>
+        <div className="relative">
+          <select
+            name={name} value={form[name] ?? ''} onChange={onChange}
+            style={{ ...style, paddingRight: 36, appearance: 'none', WebkitAppearance: 'none', cursor: 'pointer' }}
+            onFocus={e => Object.assign(e.currentTarget.style, FIELD_FOCUS)}
+            onBlur={e => Object.assign(e.currentTarget.style, hasErr ? FIELD_ERROR : { borderColor: 'rgba(255,255,255,0.1)', boxShadow: '' })}
+          >
+            {options.map((o) => <option key={o} style={{ background: '#0d1526' }}>{o}</option>)}
+          </select>
+          <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.3)' }} />
+        </div>
       ) : (
         <div className="relative">
-          {Icon && <Icon size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />}
+          {Icon && <Icon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />}
           <input
-            name={name}
-            type={type}
-            value={form[name] ?? ''}
-            onChange={onChange}
-            required={required}
-            className={`input ${Icon ? 'pl-10' : ''}`}
+            name={name} type={type} value={form[name] ?? ''} onChange={onChange}
+            style={{ ...style, paddingLeft: Icon ? 34 : 12 }}
+            onFocus={e => Object.assign(e.currentTarget.style, FIELD_FOCUS)}
+            onBlur={e => Object.assign(e.currentTarget.style, hasErr ? FIELD_ERROR : { borderColor: 'rgba(255,255,255,0.1)', boxShadow: '' })}
+            placeholder={type === 'date' ? undefined : `Enter ${label.toLowerCase()}…`}
           />
         </div>
       )}
+      {hasErr && <p className="text-xs mt-1" style={{ color: '#f87171' }}>{errors[name]}</p>}
+    </div>
+  );
+}
+
+function SectionDivider({ label }) {
+  return (
+    <div className="sm:col-span-2 flex items-center gap-3 pt-1">
+      <p className="text-xs font-bold uppercase tracking-widest whitespace-nowrap" style={{ color: 'rgba(99,102,241,0.8)' }}>{label}</p>
+      <div className="flex-1 h-px" style={{ background: 'rgba(99,102,241,0.15)' }} />
     </div>
   );
 }
 
 /* ── Modal ─────────────────────────────────────────────────────────────────── */
 function EmployeeModal({ open, onClose, onSave, initial, saving }) {
-  const [form, setForm] = useState(initial ?? EMPTY_FORM);
+  const [form, setForm]     = useState(initial ?? EMPTY_FORM);
+  const [errors, setErrors] = useState({});
   const isEdit = !!initial?._id;
 
   function handleChange(e) {
-    setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value }));
+    if (errors[name]) setErrors((er) => ({ ...er, [name]: '' }));
+  }
+
+  function validate() {
+    const errs = {};
+    if (!form.employeeId?.trim())  errs.employeeId  = 'Employee ID is required';
+    if (!form.firstName?.trim())   errs.firstName   = 'First name is required';
+    if (!form.lastName?.trim())    errs.lastName    = 'Last name is required';
+    if (!form.email?.trim())       errs.email       = 'Email is required';
+    else if (!/^\S+@\S+\.\S+$/.test(form.email)) errs.email = 'Enter a valid email';
+    if (!form.basicSalary || Number(form.basicSalary) <= 0) errs.basicSalary = 'Enter a valid salary';
+    return errs;
   }
 
   function handleSubmit(e) {
     e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length) { setErrors(errs); return; }
     onSave(form);
   }
 
@@ -75,50 +126,90 @@ function EmployeeModal({ open, onClose, onSave, initial, saving }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 sticky top-0 z-10 rounded-t-2xl" style={{ background: '#0a1020', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-          <div>
-            <h2 className="text-lg font-bold" style={{ color: 'rgba(255,255,255,0.9)' }}>{isEdit ? 'Edit Employee' : 'Add New Employee'}</h2>
-            <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>{isEdit ? 'Update employee information' : 'Fill in the details below'}</p>
-          </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors" style={{ color: 'rgba(255,255,255,0.35)' }}
-            onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.06)'; e.currentTarget.style.color='rgba(255,255,255,0.8)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color='rgba(255,255,255,0.35)'; }}
-          >
-            <X size={18} />
-          </button>
-        </div>
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6">
-          <ModalField name="employeeId" label="Employee ID"    icon={Briefcase} required form={form} onChange={handleChange} />
-          <ModalField name="role"       label="Role"            options={['Admin', 'HR', 'Accountant']} required form={form} onChange={handleChange} />
-          <ModalField name="firstName"  label="First Name"      required form={form} onChange={handleChange} />
-          <ModalField name="lastName"   label="Last Name"       required form={form} onChange={handleChange} />
-          <ModalField name="email"      label="Email"           icon={Mail}  type="email"  required form={form} onChange={handleChange} />
-          <ModalField name="phone"      label="Phone"           icon={Phone} form={form} onChange={handleChange} />
-          <ModalField name="department" label="Department"      icon={Building2} form={form} onChange={handleChange} />
-          <ModalField name="basicSalary" label="Basic Salary ($)" icon={DollarSign} type="number" required form={form} onChange={handleChange} />
-          <div className="sm:col-span-2">
-            <label className="label">Date Joined</label>
-            <div className="relative">
-              <Calendar size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />
-              <input
-                name="dateJoined"
-                type="date"
-                value={form.dateJoined ? form.dateJoined.split('T')[0] : ''}
-                onChange={handleChange}
-                className="input pl-10"
-              />
+      <div className="absolute inset-0 backdrop-blur-sm" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={onClose} />
+      <div
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up"
+        style={{ background: 'linear-gradient(145deg,#0d1117,#0a0f1e)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 20, boxShadow: '0 40px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04)' }}
+      >
+        {/* ── Header ── */}
+        <div
+          className="flex items-center justify-between px-6 py-5 sticky top-0 z-10"
+          style={{ background: 'linear-gradient(145deg,#0d1117,#0a0f1e)', borderBottom: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px 20px 0 0' }}
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ background: 'linear-gradient(135deg,rgba(99,102,241,0.25),rgba(139,92,246,0.15))', border: '1px solid rgba(99,102,241,0.3)' }}>
+              <UserCircle size={20} style={{ color: '#818cf8' }} />
+            </div>
+            <div>
+              <h2 className="text-base font-bold" style={{ color: 'rgba(255,255,255,0.92)' }}>
+                {isEdit ? 'Edit Employee' : 'Add New Employee'}
+              </h2>
+              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                {isEdit ? 'Update employee information' : 'Fill in all required fields to register a new team member'}
+              </p>
             </div>
           </div>
-          <div className="sm:col-span-2 flex gap-3 justify-end pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <button
+            type="button" onClick={onClose}
+            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-150"
+            style={{ color: 'rgba(255,255,255,0.3)' }}
+            onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.07)'; e.currentTarget.style.color='rgba(255,255,255,0.8)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color='rgba(255,255,255,0.3)'; }}
+          >
+            <X size={17} />
+          </button>
+        </div>
+
+        {/* ── Form body ── */}
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4 p-6">
+
+            <SectionDivider label="Identity" />
+            <EField name="employeeId" label="Employee ID"  icon={Briefcase} required half form={form} errors={errors} onChange={handleChange} />
+            <EField name="role"       label="Role"          options={['Admin', 'HR', 'Accountant']} required half form={form} errors={errors} onChange={handleChange} />
+            <EField name="firstName"  label="First Name"   required half form={form} errors={errors} onChange={handleChange} />
+            <EField name="lastName"   label="Last Name"    required half form={form} errors={errors} onChange={handleChange} />
+
+            <SectionDivider label="Contact" />
+            <EField name="email"  label="Email Address"  icon={Mail}  type="email" required half form={form} errors={errors} onChange={handleChange} />
+            <EField name="phone"  label="Phone Number"   icon={Phone}            half form={form} errors={errors} onChange={handleChange} />
+
+            <SectionDivider label="Employment" />
+            <EField name="department"  label="Department"     icon={Building2} half form={form} errors={errors} onChange={handleChange} />
+            <EField name="basicSalary" label="Basic Salary ($)" icon={DollarSign} type="number" required half form={form} errors={errors} onChange={handleChange} />
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Date Joined</label>
+              <div className="relative">
+                <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />
+                <input
+                  name="dateJoined" type="date"
+                  value={form.dateJoined ? form.dateJoined.split('T')[0] : ''}
+                  onChange={handleChange}
+                  style={{ ...FIELD_BASE, paddingLeft: 34 }}
+                  onFocus={e => Object.assign(e.currentTarget.style, FIELD_FOCUS)}
+                  onBlur={e => Object.assign(e.currentTarget.style, { borderColor: 'rgba(255,255,255,0.1)', boxShadow: '' })}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* ── Footer ── */}
+          <div
+            className="flex items-center justify-end gap-3 px-6 py-4"
+            style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+          >
             <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
-            <button type="submit" disabled={saving} className="btn-primary">
+            <button
+              type="submit" disabled={saving}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all duration-200 disabled:opacity-60"
+              style={{ background: 'linear-gradient(135deg,#6366f1,#818cf8)', boxShadow: '0 0 20px rgba(99,102,241,0.35)' }}
+              onMouseEnter={e => { if (!saving) e.currentTarget.style.boxShadow='0 0 28px rgba(99,102,241,0.55)'; }}
+              onMouseLeave={e => { e.currentTarget.style.boxShadow='0 0 20px rgba(99,102,241,0.35)'; }}
+            >
               {saving
-                ? <svg className="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                : <><Save size={15}/> {isEdit ? 'Save Changes' : 'Add Employee'}</>
+                ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                : <><Save size={14} /> {isEdit ? 'Save Changes' : 'Add Employee'}</>
               }
             </button>
           </div>
