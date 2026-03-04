@@ -53,27 +53,70 @@ function EmptyState({ icon: Icon, label }) {
 }
 
 /* ─── Reusable asset modal field ───────────────────────────────────────────── */
-function AssetModalField({ name, label, type = 'text', icon: Icon, options, col2, form, onChange }) {
+const A_FIELD_BASE = {
+  background: 'rgba(255,255,255,0.04)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  color: 'rgba(255,255,255,0.85)',
+  borderRadius: 10,
+  outline: 'none',
+  width: '100%',
+  padding: '9px 12px',
+  fontSize: 14,
+  transition: 'border-color 0.15s, box-shadow 0.15s',
+};
+const A_FOCUS = { borderColor: 'rgba(6,182,212,0.55)', boxShadow: '0 0 0 3px rgba(6,182,212,0.12)' };
+const A_ERR   = { borderColor: 'rgba(239,68,68,0.5)',  boxShadow: '0 0 0 3px rgba(239,68,68,0.1)' };
+
+function AField({ name, label, type = 'text', icon: Icon, required, options, span2, form, errors, onChange }) {
+  const hasErr = !!errors?.[name];
+  const base   = { ...A_FIELD_BASE, ...(hasErr ? A_ERR : {}) };
   return (
-    <div className={col2 ? 'sm:col-span-2' : ''}>
-      <label className="label">{label}</label>
+    <div className={span2 ? 'sm:col-span-2' : ''}>
+      <label className="block text-xs font-semibold mb-1.5" style={{ color: hasErr ? '#f87171' : 'rgba(255,255,255,0.5)' }}>
+        {label}{required && <span className="ml-0.5" style={{ color: '#f87171' }}>*</span>}
+      </label>
       {options ? (
         <div className="relative">
-          <select name={name} value={form[name] ?? ''} onChange={onChange} className="input appearance-none pr-8">
-            {options.map((o) => <option key={o}>{o}</option>)}
+          <select
+            name={name} value={form[name] ?? ''} onChange={onChange}
+            style={{ ...base, paddingRight: 36, appearance: 'none', WebkitAppearance: 'none', cursor: 'pointer' }}
+            onFocus={e => Object.assign(e.currentTarget.style, A_FOCUS)}
+            onBlur={e => Object.assign(e.currentTarget.style, hasErr ? A_ERR : { borderColor: 'rgba(255,255,255,0.1)', boxShadow: '' })}
+          >
+            {options.map((o) => <option key={o} style={{ background: '#0d1526' }}>{o}</option>)}
           </select>
-          <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />
+          <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.3)' }} />
         </div>
+      ) : type === 'textarea' ? (
+        <textarea
+          name={name} value={form[name] ?? ''} onChange={onChange} rows={2}
+          placeholder="Optional description…"
+          style={{ ...base, resize: 'none', lineHeight: 1.6 }}
+          onFocus={e => Object.assign(e.currentTarget.style, A_FOCUS)}
+          onBlur={e => Object.assign(e.currentTarget.style, { borderColor: 'rgba(255,255,255,0.1)', boxShadow: '' })}
+        />
       ) : (
         <div className="relative">
-          {Icon && <Icon size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />}
+          {Icon && <Icon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />}
           <input
-            name={name} type={type} value={form[name] ?? ''}
-            onChange={onChange}
-            className={`input ${Icon ? 'pl-10' : ''}`}
+            name={name} type={type} value={form[name] ?? ''} onChange={onChange}
+            placeholder={type === 'date' ? undefined : `Enter ${label.toLowerCase()}…`}
+            style={{ ...base, paddingLeft: Icon ? 34 : 12 }}
+            onFocus={e => Object.assign(e.currentTarget.style, A_FOCUS)}
+            onBlur={e => Object.assign(e.currentTarget.style, hasErr ? A_ERR : { borderColor: 'rgba(255,255,255,0.1)', boxShadow: '' })}
           />
         </div>
       )}
+      {hasErr && <p className="text-xs mt-1" style={{ color: '#f87171' }}>{errors[name]}</p>}
+    </div>
+  );
+}
+
+function AssetSectionDivider({ label }) {
+  return (
+    <div className="sm:col-span-2 flex items-center gap-3 pt-1">
+      <p className="text-xs font-bold uppercase tracking-widest whitespace-nowrap" style={{ color: 'rgba(6,182,212,0.7)' }}>{label}</p>
+      <div className="flex-1 h-px" style={{ background: 'rgba(6,182,212,0.15)' }} />
     </div>
   );
 }
@@ -86,58 +129,113 @@ const EMPTY_ASSET = {
 };
 
 function AssetModal({ open, onClose, onSave, initial, saving }) {
-  const [form, setForm] = useState(initial ?? EMPTY_ASSET);
+  const [form, setForm]     = useState(initial ?? EMPTY_ASSET);
+  const [errors, setErrors] = useState({});
   const isEdit = !!initial?._id;
 
-  function handleChange(e) { setForm((f) => ({ ...f, [e.target.name]: e.target.value })); }
-  function handleSubmit(e) { e.preventDefault(); onSave(form); }
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value }));
+    if (errors[name]) setErrors((er) => ({ ...er, [name]: '' }));
+  }
+
+  function validate() {
+    const errs = {};
+    if (!form.assetId?.trim())    errs.assetId    = 'Asset ID is required';
+    if (!form.purchaseCost || Number(form.purchaseCost) <= 0) errs.purchaseCost = 'Enter a valid purchase cost';
+    return errs;
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+    onSave(form);
+  }
+
   if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
-        <div className="flex items-center justify-between px-6 py-4 sticky top-0 z-10 rounded-t-2xl" style={{ background: '#0a1020', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-          <div>
-            <h3 className="text-lg font-bold" style={{ color: 'rgba(255,255,255,0.9)' }}>{isEdit ? 'Edit Asset' : 'Add New Asset'}</h3>
-            <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Fill in the asset details below</p>
+      <div className="absolute inset-0 backdrop-blur-sm" style={{ background: 'rgba(0,0,0,0.65)' }} onClick={onClose} />
+      <div
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up"
+        style={{ background: 'linear-gradient(145deg,#0a0e1a,#060c18)', border: '1px solid rgba(6,182,212,0.18)', borderRadius: 20, boxShadow: '0 40px 100px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.035)' }}
+      >
+        {/* Header */}
+        <div
+          className="flex items-center justify-between px-6 py-5 sticky top-0 z-10"
+          style={{ background: 'linear-gradient(145deg,#0a0e1a,#060c18)', borderBottom: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px 20px 0 0' }}
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ background: 'linear-gradient(135deg,rgba(6,182,212,0.2),rgba(59,130,246,0.1))', border: '1px solid rgba(6,182,212,0.25)' }}>
+              <Package size={18} style={{ color: '#22d3ee' }} />
+            </div>
+            <div>
+              <h2 className="text-base font-bold" style={{ color: 'rgba(255,255,255,0.92)' }}>
+                {isEdit ? 'Edit Asset' : 'Register New Asset'}
+              </h2>
+              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                {isEdit ? 'Update asset information' : 'Fill in the details to register an asset in the system'}
+              </p>
+            </div>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors" style={{ color: 'rgba(255,255,255,0.35)' }}
-            onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.06)'; e.currentTarget.style.color='rgba(255,255,255,0.8)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color='rgba(255,255,255,0.35)'; }}
+          <button
+            type="button" onClick={onClose}
+            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-150"
+            style={{ color: 'rgba(255,255,255,0.3)' }}
+            onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.07)'; e.currentTarget.style.color='rgba(255,255,255,0.8)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color='rgba(255,255,255,0.3)'; }}
           >
-            <X size={18} />
+            <X size={17} />
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6">
-          <AssetModalField name="assetId" label="Asset ID" required form={form} onChange={handleChange} />
-          <AssetModalField name="category" label="Category" required
-            options={['IT Equipment', 'Furniture', 'Vehicles', 'Machinery', 'Office Supplies', 'Other']}
-            form={form} onChange={handleChange} />
-          <AssetModalField name="serialNumber" label="Serial Number" form={form} onChange={handleChange} />
-          <AssetModalField name="supplier"          label="Supplier" form={form} onChange={handleChange} />
-          <AssetModalField name="purchaseDate"      label="Purchase Date"      type="date" icon={Calendar} form={form} onChange={handleChange} />
-          <AssetModalField name="purchaseCost"      label="Purchase Cost ($)"  type="number" icon={DollarSign} required form={form} onChange={handleChange} />
-          <AssetModalField name="depreciationRate"  label="Depreciation Rate (%)" type="number" form={form} onChange={handleChange} />
-          <AssetModalField name="assignedLocation"  label="Location"           icon={MapPin} form={form} onChange={handleChange} />
-          <AssetModalField name="responsiblePerson" label="Responsible Person" icon={User} form={form} onChange={handleChange} />
-          <AssetModalField name="status"            label="Status"             options={['Active', 'In Repair', 'Disposed', 'Transferred']} form={form} onChange={handleChange} />
-          <div className="sm:col-span-2">
-            <label className="label">Description</label>
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              rows={2}
-              className="input resize-none"
-              placeholder="Optional description…"
-            />
+
+        {/* Form body */}
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4 p-6">
+
+            <AssetSectionDivider label="Identification" />
+            <AField name="assetId"      label="Asset ID"        required icon={Package}   form={form} errors={errors} onChange={handleChange} />
+            <AField name="category"     label="Category"        required
+              options={['IT Equipment','Furniture','Vehicles','Machinery','Office Supplies','Other']}
+              form={form} errors={errors} onChange={handleChange} />
+            <AField name="serialNumber" label="Serial Number"   icon={Briefcase} form={form} errors={errors} onChange={handleChange} />
+            <AField name="status"       label="Status"
+              options={['Active','In Repair','Disposed','Transferred']}
+              form={form} errors={errors} onChange={handleChange} />
+
+            <AssetSectionDivider label="Purchase Details" />
+            <AField name="supplier"        label="Supplier"                icon={Briefcase}    form={form} errors={errors} onChange={handleChange} />
+            <AField name="purchaseDate"    label="Purchase Date"           icon={Calendar}     type="date"   form={form} errors={errors} onChange={handleChange} />
+            <AField name="purchaseCost"    label="Purchase Cost ($)"       icon={DollarSign}   type="number" required form={form} errors={errors} onChange={handleChange} />
+            <AField name="depreciationRate" label="Depreciation Rate (%)"  icon={TrendingDown} type="number" form={form} errors={errors} onChange={handleChange} />
+
+            <AssetSectionDivider label="Assignment" />
+            <AField name="assignedLocation"  label="Assigned Location"  icon={MapPin} form={form} errors={errors} onChange={handleChange} />
+            <AField name="responsiblePerson" label="Responsible Person" icon={User}   form={form} errors={errors} onChange={handleChange} />
+            <AField name="description" label="Description" type="textarea" span2 form={form} errors={errors} onChange={handleChange} />
+
           </div>
-          <div className="sm:col-span-2 flex gap-3 justify-end pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+
+          {/* Footer */}
+          <div
+            className="flex items-center justify-end gap-3 px-6 py-4"
+            style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+          >
             <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
-            <button type="submit" disabled={saving} className="btn-primary">
-              {saving ? <svg className="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-              : <><Save size={15} /> {isEdit ? 'Save Changes' : 'Add Asset'}</>}
+            <button
+              type="submit" disabled={saving}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all duration-200 disabled:opacity-60"
+              style={{ background: 'linear-gradient(135deg,#06b6d4,#3b82f6)', boxShadow: '0 0 20px rgba(6,182,212,0.3)' }}
+              onMouseEnter={e => { if (!saving) e.currentTarget.style.boxShadow='0 0 28px rgba(6,182,212,0.55)'; }}
+              onMouseLeave={e => { e.currentTarget.style.boxShadow='0 0 20px rgba(6,182,212,0.3)'; }}
+            >
+              {saving
+                ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                : <><Save size={14} /> {isEdit ? 'Save Changes' : 'Register Asset'}</>
+              }
             </button>
           </div>
         </form>
