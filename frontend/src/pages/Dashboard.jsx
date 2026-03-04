@@ -98,9 +98,9 @@ export default function Dashboard() {
           payrollAPI.getAll(),
           assetAPI.getAll(),
         ]);
-        const employees = empRes.status === 'fulfilled' ? (empRes.value.data?.length ?? 0) : 0;
-        const payrolls  = payRes.status === 'fulfilled' ? payRes.value.data : [];
-        const assets    = astRes.status === 'fulfilled' ? (astRes.value.data?.length ?? 0) : 0;
+        const employees = empRes.status === 'fulfilled' ? (empRes.value.data?.count ?? empRes.value.data?.data?.length ?? 0) : 0;
+        const payrolls  = payRes.status === 'fulfilled' ? (Array.isArray(payRes.value.data?.data) ? payRes.value.data.data : []) : [];
+        const assets    = astRes.status === 'fulfilled' ? (astRes.value.data?.count ?? astRes.value.data?.data?.length ?? 0) : 0;
         const totalPay  = Array.isArray(payrolls)
           ? payrolls.reduce((s, p) => s + (p.netPay ?? p.basicSalary ?? 0), 0)
           : 0;

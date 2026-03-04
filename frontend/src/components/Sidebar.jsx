@@ -6,6 +6,7 @@ import {
   Package,
   LogOut,
   Zap,
+  UserCircle,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -90,8 +91,10 @@ function SidebarContent({ collapsed, onClose, onSignOut, user }) {
             className="flex items-center gap-3 px-3 py-2 rounded-xl mb-2"
             style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
           >
-            <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-              style={{ boxShadow: '0 0 0 2px rgba(6,182,212,0.4)' }} />
+              <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                style={{ background: 'rgba(255,255,255,0.08)', boxShadow: '0 0 0 2px rgba(6,182,212,0.4)' }}>
+                <UserCircle size={20} className="text-slate-400" />
+              </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold truncate" style={{ color: 'rgba(255,255,255,0.85)' }}>{user.name}</p>
               <p className="text-xs truncate" style={{ color: 'rgba(255,255,255,0.35)' }}>{user.role}</p>

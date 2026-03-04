@@ -15,12 +15,17 @@ export function AuthProvider({ children }) {
 
   const signIn = useCallback((credentials) => {
     // Mock auth — swap for real API call when backend auth is added
+    // Derive a display name: use provided name, or readable prefix from email
+    const derivedName =
+      credentials.name ??
+      (credentials.email
+        ? credentials.email.split('@')[0].replace(/[._-]/g, ' ')
+        : 'User');
     const mockUser = {
       id: '1',
-      name: 'Alex Johnson',
+      name: derivedName,
       email: credentials.email,
       role: 'Admin',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2',
     };
     localStorage.setItem('payrollpro_user', JSON.stringify(mockUser));
     setUser(mockUser);

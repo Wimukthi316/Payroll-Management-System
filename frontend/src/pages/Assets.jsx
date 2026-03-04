@@ -80,7 +80,7 @@ function AssetModalField({ name, label, type = 'text', icon: Icon, options, col2
 
 /* ─── Asset Form Modal ──────────────────────────────────────────────────────── */
 const EMPTY_ASSET = {
-  assetId: '', category: '', description: '', serialNumber: '',
+  assetId: '', category: 'IT Equipment', description: '', serialNumber: '',
   purchaseDate: '', supplier: '', purchaseCost: '', depreciationRate: '',
   assignedLocation: '', responsiblePerson: '', status: 'Active',
 };
@@ -110,9 +110,11 @@ function AssetModal({ open, onClose, onSave, initial, saving }) {
           </button>
         </div>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6">
-          <AssetModalField name="assetId"           label="Asset ID"           required form={form} onChange={handleChange} />
-          <AssetModalField name="category"          label="Category"           required form={form} onChange={handleChange} />
-          <AssetModalField name="serialNumber"      label="Serial Number" form={form} onChange={handleChange} />
+          <AssetModalField name="assetId" label="Asset ID" required form={form} onChange={handleChange} />
+          <AssetModalField name="category" label="Category" required
+            options={['IT Equipment', 'Furniture', 'Vehicles', 'Machinery', 'Office Supplies', 'Other']}
+            form={form} onChange={handleChange} />
+          <AssetModalField name="serialNumber" label="Serial Number" form={form} onChange={handleChange} />
           <AssetModalField name="supplier"          label="Supplier" form={form} onChange={handleChange} />
           <AssetModalField name="purchaseDate"      label="Purchase Date"      type="date" icon={Calendar} form={form} onChange={handleChange} />
           <AssetModalField name="purchaseCost"      label="Purchase Cost ($)"  type="number" icon={DollarSign} required form={form} onChange={handleChange} />

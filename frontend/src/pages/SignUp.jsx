@@ -55,7 +55,7 @@ export default function SignUp() {
     setLoading(true);
     try {
       await new Promise((r) => setTimeout(r, 800));
-      signIn({ email: form.email, password: form.password });
+      signIn({ name: `${form.firstName} ${form.lastName}`.trim(), email: form.email, password: form.password });
       navigate('/dashboard');
     } finally {
       setLoading(false);

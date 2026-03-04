@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Bell, Search, Menu, X, ChevronDown, PanelLeft } from 'lucide-react';
+import { Bell, Search, Menu, X, ChevronDown, PanelLeft, UserCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const PAGE_TITLES = {
@@ -126,12 +126,12 @@ export default function Header({ onMenuToggle, mobileOpen, onToggleCollapse }) {
             onMouseEnter={e => e.currentTarget.style.background='rgba(255,255,255,0.05)'}
             onMouseLeave={e => e.currentTarget.style.background=''}
           >
-            <img
-              src={user?.avatar}
-              alt={user?.name}
-              className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-              style={{ boxShadow: '0 0 0 2px rgba(6,182,212,0.4)' }}
-            />
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+              style={{ background: 'rgba(255,255,255,0.08)', boxShadow: '0 0 0 2px rgba(6,182,212,0.4)' }}
+            >
+              <UserCircle size={20} className="text-slate-400" />
+            </div>
             <span className="hidden sm:block text-sm font-semibold max-w-[120px] truncate" style={{ color: 'rgba(255,255,255,0.8)' }}>
               {user?.name}
             </span>

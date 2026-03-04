@@ -2,25 +2,10 @@ import { useEffect, useState, useMemo } from 'react';
 import {
   UserPlus, Search, Pencil, Trash2, X, ChevronUp, ChevronDown,
   Mail, Phone, Briefcase, Building2, Calendar, DollarSign, Save,
-  AlertTriangle,
+  AlertTriangle, UserCircle,
 } from 'lucide-react';
 import { employeeAPI } from '../services/api';
 
-const AVATAR_SEEDS = [
-  'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=80&h=80&auto=format&fit=facearea&facepad=2',
-  'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=80&h=80&auto=format&fit=facearea&facepad=2',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=80&h=80&auto=format&fit=facearea&facepad=2',
-  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=80&h=80&auto=format&fit=facearea&facepad=2',
-  'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=80&h=80&auto=format&fit=facearea&facepad=2',
-  'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=80&h=80&auto=format&fit=facearea&facepad=2',
-  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=80&h=80&auto=format&fit=facearea&facepad=2',
-  'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=80&h=80&auto=format&fit=facearea&facepad=2',
-];
-
-function getAvatar(id) {
-  const hash = [...String(id ?? '')].reduce((a, c) => a + c.charCodeAt(0), 0);
-  return AVATAR_SEEDS[hash % AVATAR_SEEDS.length];
-}
 
 const ROLE_BADGE = {
   Admin:      'badge-blue',
@@ -373,12 +358,12 @@ export default function Employees() {
                     <td className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>{emp.employeeId}</td>
                     <td>
                       <div className="flex items-center gap-3">
-                        <img
-                          src={getAvatar(emp.employeeId)}
-                          alt={`${emp.firstName}`}
-                          className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-                          style={{ boxShadow: '0 0 0 2px rgba(6,182,212,0.3)' }}
-                        />
+                        <div
+                          className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                          style={{ background: 'rgba(255,255,255,0.08)', boxShadow: '0 0 0 2px rgba(6,182,212,0.3)' }}
+                        >
+                          <UserCircle size={20} className="text-slate-400" />
+                        </div>
                         <div className="min-w-0">
                           <p className="font-semibold truncate" style={{ color: 'rgba(255,255,255,0.85)' }}>
                             {emp.firstName} {emp.lastName}

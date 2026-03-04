@@ -375,7 +375,7 @@ export default function Payroll() {
                     <tr key={rec._id}>
                       <td>
                         {emp ? (
-                          <p className="font-semibold text-slate-800">
+                          <p className="font-semibold" style={{ color: 'rgba(255,255,255,0.85)' }}>
                             {emp.firstName} {emp.lastName}
                           </p>
                         ) : (
@@ -387,7 +387,7 @@ export default function Payroll() {
                       </td>
                       <td className="font-medium">{fmt(rec.basicSalary)}</td>
                       <td>{fmt(rec.overtimePay)}</td>
-                      <td className="font-semibold text-slate-700">{fmt(rec.grossPay)}</td>
+                      <td className="font-semibold" style={{ color: 'rgba(255,255,255,0.8)' }}>{fmt(rec.grossPay)}</td>
                       <td className="text-red-500">{fmt(rec.epfDeduction)}</td>
                     <td>
                         <span className="inline-block px-2.5 py-1 rounded-lg font-bold text-sm" style={{ background: 'rgba(52,211,153,0.1)', color: '#34d399' }}>
