@@ -244,8 +244,8 @@ export default function Payroll() {
     setLoading(true);
     try {
       const [pRes, eRes] = await Promise.allSettled([payrollAPI.getAll(), employeeAPI.getAll()]);
-      setRecords(pRes.status === 'fulfilled' ? (pRes.value.data ?? []) : []);
-      setEmployees(eRes.status === 'fulfilled' ? (eRes.value.data ?? []) : []);
+      setRecords(pRes.status === 'fulfilled' ? (Array.isArray(pRes.value.data?.data) ? pRes.value.data.data : []) : []);
+      setEmployees(eRes.status === 'fulfilled' ? (Array.isArray(eRes.value.data?.data) ? eRes.value.data.data : []) : []);
     } finally {
       setLoading(false);
     }

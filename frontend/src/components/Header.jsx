@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Bell, Search, Menu, X, ChevronDown } from 'lucide-react';
+import { Bell, Search, Menu, X, ChevronDown, PanelLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const PAGE_TITLES = {
@@ -16,7 +16,7 @@ const MOCK_NOTIFICATIONS = [
   { id: 3, text: 'Asset maintenance due: Laptop',  time: '3 hrs ago',  dot: 'bg-amber-400' },
 ];
 
-export default function Header({ onMenuToggle, mobileOpen }) {
+export default function Header({ onMenuToggle, mobileOpen, onToggleCollapse }) {
   const { user }        = useAuth();
   const { pathname }    = useLocation();
   const [notifOpen, setNotifOpen] = useState(false);
@@ -25,9 +25,21 @@ export default function Header({ onMenuToggle, mobileOpen }) {
   const { title, subtitle } = PAGE_TITLES[pathname] ?? { title: 'PayrollPro', subtitle: '' };
 
   return (
-    <header className="sticky top-0 z-10 glass">
+    <header className="sticky top-0 z-40 glass" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
       <div className="flex items-center gap-4 px-4 sm:px-6 h-16">
-        {/* Mobile menu toggle */}
+        {/* Desktop sidebar collapse toggle — visible on lg+ only */}
+        <button
+          onClick={onToggleCollapse}
+          className="hidden lg:flex flex-shrink-0 w-9 h-9 items-center justify-center rounded-lg transition-colors"
+          style={{ color: 'rgba(255,255,255,0.45)' }}
+          onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.06)'; e.currentTarget.style.color='#22d3ee'; }}
+          onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color='rgba(255,255,255,0.45)'; }}
+          title="Toggle sidebar"
+        >
+          <PanelLeft size={20} />
+        </button>
+
+        {/* Mobile menu toggle — visible on <lg only */}
         <button
           onClick={onMenuToggle}
           className="lg:hidden flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-lg transition-colors"

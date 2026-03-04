@@ -192,7 +192,7 @@ export default function Employees() {
     setLoading(true);
     try {
       const res = await employeeAPI.getAll();
-      setEmployees(res.data ?? []);
+      setEmployees(Array.isArray(res.data?.data) ? res.data.data : []);
     } catch {
       setEmployees([]);
     } finally {

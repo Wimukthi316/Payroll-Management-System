@@ -180,7 +180,10 @@ function AllAssetsTab({ toast }) {
 
   async function load() {
     setLoading(true);
-    try { setAssets((await assetAPI.getAll()).data ?? []); } catch { setAssets([]); }
+    try {
+      const r = await assetAPI.getAll();
+      setAssets(Array.isArray(r.data?.data) ? r.data.data : []);
+    } catch { setAssets([]); }
     finally { setLoading(false); }
   }
   useEffect(() => { load(); }, []);
@@ -281,8 +284,8 @@ function MaintenanceTab({ toast }) {
     setLoading(true);
     try {
       const [mRes, aRes] = await Promise.allSettled([maintenanceAPI.getAll(), assetAPI.getAll()]);
-      setRecords(mRes.status === 'fulfilled' ? (mRes.value.data ?? []) : []);
-      setAssets(aRes.status === 'fulfilled'  ? (aRes.value.data  ?? []) : []);
+      setRecords(mRes.status === 'fulfilled' ? (Array.isArray(mRes.value.data?.data) ? mRes.value.data.data : []) : []);
+      setAssets(aRes.status === 'fulfilled'  ? (Array.isArray(aRes.value.data?.data)  ? aRes.value.data.data  : []) : []);
     } finally { setLoading(false); }
   }
   useEffect(() => { load(); }, []);
@@ -415,8 +418,8 @@ function TransfersTab({ toast }) {
     setLoading(true);
     try {
       const [tRes, aRes] = await Promise.allSettled([transferAPI.getAll(), assetAPI.getAll()]);
-      setRecords(tRes.status === 'fulfilled' ? (tRes.value.data ?? []) : []);
-      setAssets(aRes.status === 'fulfilled'  ? (aRes.value.data  ?? []) : []);
+      setRecords(tRes.status === 'fulfilled' ? (Array.isArray(tRes.value.data?.data) ? tRes.value.data.data : []) : []);
+      setAssets(aRes.status === 'fulfilled'  ? (Array.isArray(aRes.value.data?.data)  ? aRes.value.data.data  : []) : []);
     } finally { setLoading(false); }
   }
   useEffect(() => { load(); }, []);
@@ -534,8 +537,8 @@ function DisposalTab({ toast }) {
     setLoading(true);
     try {
       const [dRes, aRes] = await Promise.allSettled([disposalAPI.getAll(), assetAPI.getAll()]);
-      setRecords(dRes.status === 'fulfilled' ? (dRes.value.data ?? []) : []);
-      setAssets(aRes.status === 'fulfilled'  ? (aRes.value.data  ?? []) : []);
+      setRecords(dRes.status === 'fulfilled' ? (Array.isArray(dRes.value.data?.data) ? dRes.value.data.data : []) : []);
+      setAssets(aRes.status === 'fulfilled'  ? (Array.isArray(aRes.value.data?.data)  ? aRes.value.data.data  : []) : []);
     } finally { setLoading(false); }
   }
   useEffect(() => { load(); }, []);
