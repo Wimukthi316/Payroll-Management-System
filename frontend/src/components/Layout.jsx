@@ -14,11 +14,11 @@ export default function Layout() {
   const title = pageTitles[pathname] ?? 'Payroll Management System';
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden">
+    <div className="flex h-screen overflow-hidden" style={{ background: 'rgb(248 250 252)' }}>
       <Sidebar />
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col flex-1 overflow-hidden min-w-0">
         <Header title={title} />
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto px-6 py-5 scroll-smooth">
           <Outlet />
         </main>
       </div>
