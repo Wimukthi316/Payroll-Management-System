@@ -46,10 +46,35 @@ function SkeletonRow() {
   );
 }
 
+/* ── Reusable modal field ──────────────────────────────────────────────────── */
+function ModalField({ name, label, type = 'text', icon: Icon, required, options, form, onChange }) {
+  return (
+    <div>
+      <label className="label">{label}</label>
+      {options ? (
+        <select name={name} value={form[name] ?? ''} onChange={onChange} className="input" required={required}>
+          {options.map((o) => <option key={o}>{o}</option>)}
+        </select>
+      ) : (
+        <div className="relative">
+          {Icon && <Icon size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />}
+          <input
+            name={name}
+            type={type}
+            value={form[name] ?? ''}
+            onChange={onChange}
+            required={required}
+            className={`input ${Icon ? 'pl-10' : ''}`}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ── Modal ─────────────────────────────────────────────────────────────────── */
 function EmployeeModal({ open, onClose, onSave, initial, saving }) {
   const [form, setForm] = useState(initial ?? EMPTY_FORM);
-  useEffect(() => { setForm(initial ?? EMPTY_FORM); }, [initial]);
   const isEdit = !!initial?._id;
 
   function handleChange(e) {
@@ -62,29 +87,6 @@ function EmployeeModal({ open, onClose, onSave, initial, saving }) {
   }
 
   if (!open) return null;
-
-  const F = ({ name, label, type = 'text', icon: Icon, required, options }) => (
-    <div>
-      <label className="label">{label}</label>
-      {options ? (
-        <select name={name} value={form[name]} onChange={handleChange} className="input" required={required}>
-          {options.map((o) => <option key={o}>{o}</option>)}
-        </select>
-      ) : (
-        <div className="relative">
-          {Icon && <Icon size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />}
-          <input
-            name={name}
-            type={type}
-            value={form[name]}
-            onChange={handleChange}
-            required={required}
-            className={`input ${Icon ? 'pl-10' : ''}`}
-          />
-        </div>
-      )}
-    </div>
-  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -102,14 +104,14 @@ function EmployeeModal({ open, onClose, onSave, initial, saving }) {
         </div>
         {/* Form */}
         <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6">
-          <F name="employeeId" label="Employee ID"    icon={Briefcase} required />
-          <F name="role"       label="Role"            options={['Admin', 'HR', 'Accountant']} required />
-          <F name="firstName"  label="First Name"      required />
-          <F name="lastName"   label="Last Name"       required />
-          <F name="email"      label="Email"           icon={Mail}  type="email"  required />
-          <F name="phone"      label="Phone"           icon={Phone} />
-          <F name="department" label="Department"      icon={Building2} />
-          <F name="basicSalary" label="Basic Salary ($)" icon={DollarSign} type="number" required />
+          <ModalField name="employeeId" label="Employee ID"    icon={Briefcase} required form={form} onChange={handleChange} />
+          <ModalField name="role"       label="Role"            options={['Admin', 'HR', 'Accountant']} required form={form} onChange={handleChange} />
+          <ModalField name="firstName"  label="First Name"      required form={form} onChange={handleChange} />
+          <ModalField name="lastName"   label="Last Name"       required form={form} onChange={handleChange} />
+          <ModalField name="email"      label="Email"           icon={Mail}  type="email"  required form={form} onChange={handleChange} />
+          <ModalField name="phone"      label="Phone"           icon={Phone} form={form} onChange={handleChange} />
+          <ModalField name="department" label="Department"      icon={Building2} form={form} onChange={handleChange} />
+          <ModalField name="basicSalary" label="Basic Salary ($)" icon={DollarSign} type="number" required form={form} onChange={handleChange} />
           <div className="sm:col-span-2">
             <label className="label">Date Joined</label>
             <div className="relative">
@@ -418,6 +420,7 @@ export default function Employees() {
 
       {/* Modals */}
       <EmployeeModal
+        key={editTarget?._id ?? 'new'}
         open={modalOpen}
         onClose={() => { setModalOpen(false); setEditTarget(null); }}
         onSave={handleSave}

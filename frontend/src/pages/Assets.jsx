@@ -68,29 +68,6 @@ function AssetModal({ open, onClose, onSave, initial, saving }) {
   function handleSubmit(e) { e.preventDefault(); onSave(form); }
   if (!open) return null;
 
-  const F = ({ name, label, type = 'text', icon: Icon, options, col2 }) => (
-    <div className={col2 ? 'sm:col-span-2' : ''}>
-      <label className="label">{label}</label>
-      {options ? (
-        <div className="relative">
-          <select name={name} value={form[name]} onChange={handleChange} className="input appearance-none pr-8">
-            {options.map((o) => <option key={o}>{o}</option>)}
-          </select>
-          <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-        </div>
-      ) : (
-        <div className="relative">
-          {Icon && <Icon size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />}
-          <input
-            name={name} type={type} value={form[name] ?? ''}
-            onChange={handleChange}
-            className={`input ${Icon ? 'pl-10' : ''}`}
-          />
-        </div>
-      )}
-    </div>
-  );
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
@@ -105,16 +82,16 @@ function AssetModal({ open, onClose, onSave, initial, saving }) {
           </button>
         </div>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6">
-          <F name="assetId"           label="Asset ID"           required />
-          <F name="category"          label="Category"           required />
-          <F name="serialNumber"      label="Serial Number" />
-          <F name="supplier"          label="Supplier" />
-          <F name="purchaseDate"      label="Purchase Date"      type="date" icon={Calendar} />
-          <F name="purchaseCost"      label="Purchase Cost ($)"  type="number" icon={DollarSign} required />
-          <F name="depreciationRate"  label="Depreciation Rate (%)" type="number" />
-          <F name="assignedLocation"  label="Location"           icon={MapPin} />
-          <F name="responsiblePerson" label="Responsible Person" icon={User} />
-          <F name="status"            label="Status"             options={['Active', 'In Repair', 'Disposed', 'Transferred']} />
+          <AssetModalField name="assetId"           label="Asset ID"           required form={form} onChange={handleChange} />
+          <AssetModalField name="category"          label="Category"           required form={form} onChange={handleChange} />
+          <AssetModalField name="serialNumber"      label="Serial Number" form={form} onChange={handleChange} />
+          <AssetModalField name="supplier"          label="Supplier" form={form} onChange={handleChange} />
+          <AssetModalField name="purchaseDate"      label="Purchase Date"      type="date" icon={Calendar} form={form} onChange={handleChange} />
+          <AssetModalField name="purchaseCost"      label="Purchase Cost ($)"  type="number" icon={DollarSign} required form={form} onChange={handleChange} />
+          <AssetModalField name="depreciationRate"  label="Depreciation Rate (%)" type="number" form={form} onChange={handleChange} />
+          <AssetModalField name="assignedLocation"  label="Location"           icon={MapPin} form={form} onChange={handleChange} />
+          <AssetModalField name="responsiblePerson" label="Responsible Person" icon={User} form={form} onChange={handleChange} />
+          <AssetModalField name="status"            label="Status"             options={['Active', 'In Repair', 'Disposed', 'Transferred']} form={form} onChange={handleChange} />
           <div className="sm:col-span-2">
             <label className="label">Description</label>
             <textarea
@@ -249,7 +226,7 @@ function AllAssetsTab({ toast }) {
           </table>
         </div>
       </div>
-      <AssetModal open={modalOpen} onClose={() => { setModalOpen(false); setEditTarget(null); }} onSave={handleSave} initial={editTarget} saving={saving} />
+      <AssetModal key={editTarget?._id ?? 'new'} open={modalOpen} onClose={() => { setModalOpen(false); setEditTarget(null); }} onSave={handleSave} initial={editTarget} saving={saving} />
       <DeleteModal item={deleteTarget} label="Asset" onClose={() => setDeleteTarget(null)} onConfirm={handleDelete} loading={deleting} />
     </>
   );

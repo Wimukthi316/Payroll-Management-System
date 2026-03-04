@@ -9,7 +9,6 @@ const FEATURES = [
     icon: Users,
     title: 'Employee Management',
     desc: 'Onboard, manage, and organise your entire workforce with role-based access controls and rich profile data.',
-    color: 'from-indigo-500 to-indigo-600',
     bg: 'bg-indigo-50',
     text: 'text-indigo-600',
   },
@@ -17,7 +16,6 @@ const FEATURES = [
     icon: DollarSign,
     title: 'Automated Payroll',
     desc: 'Calculate salaries, overtime, EPF, ETF, and net pay automatically in seconds. Generate payslips with one click.',
-    color: 'from-emerald-500 to-emerald-600',
     bg: 'bg-emerald-50',
     text: 'text-emerald-600',
   },
@@ -25,7 +23,6 @@ const FEATURES = [
     icon: Package,
     title: 'Asset Tracking',
     desc: 'Track every asset from purchase to disposal. Manage maintenance schedules, transfers, and depreciation.',
-    color: 'from-violet-500 to-violet-600',
     bg: 'bg-violet-50',
     text: 'text-violet-600',
   },
@@ -33,7 +30,6 @@ const FEATURES = [
     icon: BarChart3,
     title: 'Insightful Reports',
     desc: 'Real-time dashboards with cost analysis, headcount trends, and asset lifecycle visibility at a glance.',
-    color: 'from-amber-500 to-orange-500',
     bg: 'bg-amber-50',
     text: 'text-amber-600',
   },
@@ -41,7 +37,6 @@ const FEATURES = [
     icon: ShieldCheck,
     title: 'Secure & Compliant',
     desc: 'Enterprise-grade security with JWT authentication, encrypted data, and full audit trail on all operations.',
-    color: 'from-sky-500 to-sky-600',
     bg: 'bg-sky-50',
     text: 'text-sky-600',
   },
@@ -49,7 +44,6 @@ const FEATURES = [
     icon: Globe,
     title: 'Cloud Ready',
     desc: 'Deploy anywhere — on-prem or cloud. Built on Node.js & MongoDB with a blazing Vite + React frontend.',
-    color: 'from-pink-500 to-rose-500',
     bg: 'bg-pink-50',
     text: 'text-pink-600',
   },
@@ -253,7 +247,7 @@ export default function Landing() {
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {FEATURES.map(({ icon: Icon, title, desc, bg, text, color }, i) => (
+            {FEATURES.map(({ icon: Icon, title, desc, bg, text }, i) => (
               <div
                 key={title}
                 className="card group cursor-pointer hover:-translate-y-1 transition-all duration-300 animate-fade-in-up"
