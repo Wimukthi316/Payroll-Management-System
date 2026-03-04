@@ -19,15 +19,15 @@ function fmt(n) {
 }
 
 /* ── Stat Card ─────────────────────────────────────────────────────────────── */
-function PayStat({ icon: Icon, label, value, bg, color }) {
+function PayStat({ icon: Icon, label, value, iconBg, iconColor }) {
   return (
     <div className="card flex items-center gap-4 hover:-translate-y-0.5 transition-all duration-300">
-      <div className={`w-11 h-11 rounded-xl ${bg} flex items-center justify-center flex-shrink-0`}>
-        <Icon size={19} className={color} />
+      <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: iconBg }}>
+        <Icon size={19} className={iconColor} />
       </div>
       <div className="min-w-0">
-        <p className="text-xs text-slate-400 font-medium truncate">{label}</p>
-        <p className="text-lg font-black text-slate-800 leading-tight">{value}</p>
+        <p className="text-xs font-medium truncate" style={{ color: 'rgba(255,255,255,0.35)' }}>{label}</p>
+        <p className="text-lg font-black leading-tight" style={{ color: 'rgba(255,255,255,0.92)' }}>{value}</p>
       </div>
     </div>
   );
@@ -91,14 +91,17 @@ function GenerateModal({ open, onClose, employees, onDone }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={handleClose} />
-      <div className="relative bg-white rounded-2xl shadow-[0_30px_80px_rgb(0,0,0,0.18)] w-full max-w-lg animate-fade-in-up overflow-hidden">
+      <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-lg animate-fade-in-up overflow-hidden" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+        <div className="flex items-center justify-between px-6 py-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
           <div>
-            <h2 className="text-lg font-bold text-slate-800">Generate Payroll</h2>
-            <p className="text-xs text-slate-400 mt-0.5">Auto-calculate salary, EPF, ETF, and net pay</p>
+            <h2 className="text-lg font-bold" style={{ color: 'rgba(255,255,255,0.9)' }}>Generate Payroll</h2>
+            <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Auto-calculate salary, EPF, ETF, and net pay</p>
           </div>
-          <button onClick={handleClose} className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
+          <button onClick={handleClose} className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors" style={{ color: 'rgba(255,255,255,0.35)' }}
+            onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.06)'; e.currentTarget.style.color='rgba(255,255,255,0.8)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color='rgba(255,255,255,0.35)'; }}
+          >
             <X size={18} />
           </button>
         </div>
@@ -107,7 +110,7 @@ function GenerateModal({ open, onClose, employees, onDone }) {
           {!result ? (
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
-                <div className="flex items-center gap-2 p-3.5 bg-red-50 border border-red-100 rounded-xl text-sm text-red-600">
+                <div className="flex items-center gap-2 p-3.5 rounded-xl text-sm" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.15)', color: '#f87171' }}>
                   <AlertTriangle size={15} className="flex-shrink-0" />
                   {error}
                 </div>
@@ -204,15 +207,15 @@ function GenerateModal({ open, onClose, employees, onDone }) {
                   { label: 'Gross Pay',      value: fmt(result.grossPay) },
                   { label: 'Total Deductions', value: fmt(result.totalDeductions) },
                 ].map(({ label, value }) => (
-                  <div key={label} className="bg-slate-50 rounded-xl p-3">
-                    <p className="text-xs text-slate-400 font-medium mb-0.5">{label}</p>
-                    <p className="text-sm font-bold text-slate-800">{value}</p>
+                  <div key={label} className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    <p className="text-xs font-medium mb-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>{label}</p>
+                    <p className="text-sm font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>{value}</p>
                   </div>
                 ))}
               </div>
-              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-indigo-50 to-violet-50 rounded-xl border border-indigo-100">
-                <p className="text-sm font-bold text-indigo-700">Net Pay</p>
-                <p className="text-xl font-black text-indigo-700">{fmt(result.netPay)}</p>
+              <div className="flex items-center justify-between p-4 rounded-xl" style={{ background: 'linear-gradient(135deg,rgba(6,182,212,0.1),rgba(99,102,241,0.08))', border: '1px solid rgba(6,182,212,0.2)' }}>
+                <p className="text-sm font-bold" style={{ color: '#22d3ee' }}>Net Pay</p>
+                <p className="text-xl font-black" style={{ color: '#22d3ee' }}>{fmt(result.netPay)}</p>
               </div>
               <button onClick={handleClose} className="btn-primary w-full justify-center">Done</button>
             </div>
@@ -288,7 +291,7 @@ export default function Payroll() {
   return (
     <div className="page-container space-y-6">
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-white border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl px-5 py-3.5 text-sm font-medium text-slate-800 flex items-center gap-3 animate-fade-in-up">
+        <div className="fixed bottom-6 right-6 z-50 rounded-2xl px-5 py-3.5 text-sm font-medium flex items-center gap-3 animate-fade-in-up" style={{ background: '#0d1526', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.85)', boxShadow: '0 8px 30px rgba(0,0,0,0.4)' }}>
           <span className="w-2 h-2 rounded-full bg-emerald-500" />
           {toast}
         </div>
@@ -307,10 +310,10 @@ export default function Payroll() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <PayStat icon={FileText}    label="Total Records"        value={loading ? '—' : records.length}         bg="bg-indigo-50"  color="text-indigo-600" />
-        <PayStat icon={DollarSign}  label="Total Net Pay (filtered)" value={loading ? '—' : fmt(totalNet)}      bg="bg-emerald-50" color="text-emerald-600" />
-        <PayStat icon={Users}       label="Employees on Payroll" value={loading ? '—' : [...new Set(records.map((r) => r.employee?._id))].filter(Boolean).length} bg="bg-violet-50"  color="text-violet-600" />
-        <PayStat icon={TrendingUp}  label="Months Covered"       value={loading ? '—' : STAT_MONTHS.length}    bg="bg-amber-50"   color="text-amber-600" />
+        <PayStat icon={FileText}    label="Total Records"        value={loading ? '—' : records.length}         iconBg="rgba(6,182,212,0.1)"    iconColor="text-cyan-400" />
+        <PayStat icon={DollarSign}  label="Total Net Pay (filtered)" value={loading ? '—' : fmt(totalNet)}      iconBg="rgba(52,211,153,0.1)" iconColor="text-emerald-400" />
+        <PayStat icon={Users}       label="Employees on Payroll" value={loading ? '—' : [...new Set(records.map((r) => r.employee?._id))].filter(Boolean).length} iconBg="rgba(167,139,250,0.1)"  iconColor="text-violet-400" />
+        <PayStat icon={TrendingUp}  label="Months Covered"       value={loading ? '—' : STAT_MONTHS.length}    iconBg="rgba(251,191,36,0.1)"   iconColor="text-amber-400" />
       </div>
 
       {/* Filters */}
@@ -356,8 +359,8 @@ export default function Payroll() {
                 ? (
                   <tr>
                     <td colSpan={8} className="px-5 py-16 text-center">
-                      <div className="flex flex-col items-center gap-3 text-slate-400">
-                        <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center">
+                      <div className="flex flex-col items-center gap-3" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
                           <DollarSign size={22} />
                         </div>
                         <p className="font-medium text-sm">No payroll records yet</p>
@@ -386,15 +389,18 @@ export default function Payroll() {
                       <td>{fmt(rec.overtimePay)}</td>
                       <td className="font-semibold text-slate-700">{fmt(rec.grossPay)}</td>
                       <td className="text-red-500">{fmt(rec.epfDeduction)}</td>
-                      <td>
-                        <span className="inline-block px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold text-sm">
+                    <td>
+                        <span className="inline-block px-2.5 py-1 rounded-lg font-bold text-sm" style={{ background: 'rgba(52,211,153,0.1)', color: '#34d399' }}>
                           {fmt(rec.netPay)}
                         </span>
                       </td>
                       <td>
                         <button
                           onClick={() => setDeleteTarget(rec)}
-                          className="w-8 h-8 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-all"
+                          className="w-8 h-8 rounded-lg flex items-center justify-center transition-all"
+                          style={{ color: 'rgba(255,255,255,0.3)' }}
+                          onMouseEnter={e => { e.currentTarget.style.background='rgba(239,68,68,0.1)'; e.currentTarget.style.color='#f87171'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color='rgba(255,255,255,0.3)'; }}
                         >
                           <Trash2 size={14} />
                         </button>
@@ -407,10 +413,10 @@ export default function Payroll() {
           </table>
         </div>
         {!loading && filtered.length > 0 && (
-          <div className="px-5 py-3.5 border-t border-slate-50 flex items-center justify-between">
-            <p className="text-xs text-slate-400">{filtered.length} records</p>
-            <p className="text-sm font-bold text-slate-700">
-              Total Net: <span className="text-indigo-600">{fmt(totalNet)}</span>
+          <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+            <p className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>{filtered.length} records</p>
+            <p className="text-sm font-bold" style={{ color: 'rgba(255,255,255,0.75)' }}>
+              Total Net: <span style={{ color: '#22d3ee' }}>{fmt(totalNet)}</span>
             </p>
           </div>
         )}
@@ -428,12 +434,12 @@ export default function Payroll() {
       {deleteTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setDeleteTarget(null)} />
-          <div className="relative bg-white rounded-2xl shadow-[0_30px_80px_rgb(0,0,0,0.18)] w-full max-w-sm p-6 animate-fade-in-up text-center">
-            <div className="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-4">
-              <AlertTriangle size={24} className="text-red-500" />
+          <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-sm p-6 animate-fade-in-up text-center" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(239,68,68,0.1)' }}>
+              <AlertTriangle size={24} className="text-red-400" />
             </div>
-            <h3 className="text-lg font-bold text-slate-800 mb-2">Delete Payroll Record</h3>
-            <p className="text-sm text-slate-500 mb-6">
+            <h3 className="text-lg font-bold mb-2" style={{ color: 'rgba(255,255,255,0.9)' }}>Delete Payroll Record</h3>
+            <p className="text-sm mb-6" style={{ color: 'rgba(255,255,255,0.45)' }}>
               Delete payroll for <strong>{deleteTarget.employee?.firstName}</strong> — {deleteTarget.month} {deleteTarget.year}?
             </p>
             <div className="flex gap-3">

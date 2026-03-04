@@ -14,8 +14,8 @@ function MiniBar({ heights = [] }) {
       {heights.map((h, i) => (
         <div
           key={i}
-          className="flex-1 rounded-sm bg-indigo-500/30 transition-all duration-500"
-          style={{ height: `${h}%` }}
+          className="flex-1 rounded-sm transition-all duration-500"
+          style={{ height: `${h}%`, background: 'rgba(6,182,212,0.25)' }}
         />
       ))}
     </div>
@@ -34,17 +34,23 @@ function StatCard({ icon: Icon, label, value, change, trend, color, bg, bars, de
         <div className={`w-11 h-11 rounded-xl ${bg} flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110`}>
           <Icon size={20} className={color} />
         </div>
-        <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${up ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'}`}>
+        <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
+          up
+            ? 'text-emerald-400'
+            : 'text-red-400'
+          }`}
+          style={{ background: up ? 'rgba(52,211,153,0.1)' : 'rgba(248,113,113,0.1)' }}
+        >
           {up ? <ArrowUpRight size={13} /> : <ArrowDownRight size={13} />}
           {change}
         </div>
       </div>
       <div>
-        <p className="text-2xl font-black text-slate-800 leading-none mb-1">{value}</p>
-        <p className="text-xs font-medium text-slate-400">{label}</p>
+        <p className="text-2xl font-black leading-none mb-1" style={{ color: 'rgba(255,255,255,0.92)' }}>{value}</p>
+        <p className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.35)' }}>{label}</p>
       </div>
       {bars && (
-        <div className="mt-auto pt-2 border-t border-slate-50">
+        <div className="mt-auto pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
           <MiniBar heights={bars} />
         </div>
       )}
@@ -71,11 +77,11 @@ function SkeletonCard() {
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 const RECENT_ACTIVITY = [
-  { text: 'Payroll generated for February 2026', time: '10 min ago', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-  { text: 'New employee Isabella Kim onboarded', time: '2 hrs ago', icon: Users, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-  { text: 'Asset LAPTOP-042 transferred to IT Dept', time: '5 hrs ago', icon: Package, color: 'text-violet-600', bg: 'bg-violet-50' },
-  { text: 'Salary updated for Marcus Reid', time: '1 day ago', icon: TrendingUp, color: 'text-amber-600', bg: 'bg-amber-50' },
-  { text: 'Asset maintenance scheduled: Projector', time: '2 days ago', icon: Clock, color: 'text-slate-500', bg: 'bg-slate-100' },
+  { text: 'Payroll generated for February 2026', time: '10 min ago', icon: DollarSign, color: 'text-emerald-400', bg: 'rgba(52,211,153,0.1)' },
+  { text: 'New employee Isabella Kim onboarded', time: '2 hrs ago', icon: Users, color: 'text-cyan-400', bg: 'rgba(6,182,212,0.1)' },
+  { text: 'Asset LAPTOP-042 transferred to IT Dept', time: '5 hrs ago', icon: Package, color: 'text-violet-400', bg: 'rgba(167,139,250,0.1)' },
+  { text: 'Salary updated for Marcus Reid', time: '1 day ago', icon: TrendingUp, color: 'text-amber-400', bg: 'rgba(251,191,36,0.1)' },
+  { text: 'Asset maintenance scheduled: Projector', time: '2 days ago', icon: Clock, color: 'text-white/30', bg: 'rgba(255,255,255,0.05)' },
 ];
 
 export default function Dashboard() {
@@ -122,8 +128,8 @@ export default function Dashboard() {
       value: loading ? '—' : stats.employees.toString(),
       change: '+4.2%',
       trend: 'up',
-      color: 'text-indigo-600',
-      bg: 'bg-indigo-50',
+      color: 'text-cyan-400',
+      bg: 'bg-cyan-400/10',
       bars: [40, 55, 48, 62, 58, 70, 65, 78, 72, 85, 80, 90],
     },
     {
@@ -132,8 +138,8 @@ export default function Dashboard() {
       value: loading ? '—' : fmt(stats.payroll),
       change: '+8.1%',
       trend: 'up',
-      color: 'text-emerald-600',
-      bg: 'bg-emerald-50',
+      color: 'text-emerald-400',
+      bg: 'bg-emerald-400/10',
       bars: [30, 42, 38, 55, 50, 68, 60, 75, 70, 82, 78, 95],
     },
     {
@@ -142,8 +148,8 @@ export default function Dashboard() {
       value: loading ? '—' : stats.assets.toString(),
       change: '-1.3%',
       trend: 'down',
-      color: 'text-violet-600',
-      bg: 'bg-violet-50',
+      color: 'text-violet-400',
+      bg: 'bg-violet-400/10',
       bars: [65, 60, 68, 55, 62, 58, 70, 52, 60, 55, 58, 50],
     },
     {
@@ -152,8 +158,8 @@ export default function Dashboard() {
       value: loading ? '—' : fmt(stats.expenses),
       change: '+2.5%',
       trend: 'up',
-      color: 'text-amber-600',
-      bg: 'bg-amber-50',
+      color: 'text-amber-400',
+      bg: 'bg-amber-400/10',
       bars: [20, 35, 28, 42, 38, 50, 44, 58, 52, 65, 60, 70],
     },
   ];
@@ -161,28 +167,31 @@ export default function Dashboard() {
   return (
     <div className="page-container space-y-8">
       {/* ── Welcome Banner ────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 p-6 sm:p-8 text-white animate-fade-in-up">
+      <div className="relative overflow-hidden rounded-2xl p-6 sm:p-8 text-white animate-fade-in-up"
+        style={{ background: 'linear-gradient(135deg, #050f2a 0%, #071a3e 50%, #050f2a 100%)', border: '1px solid rgba(6,182,212,0.2)', boxShadow: '0 0 60px rgba(6,182,212,0.08)' }}
+      >
         {/* Pattern overlay */}
-        <div className="absolute inset-0 opacity-10"
+        <div className="absolute inset-0 opacity-[0.025]"
           style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='1.5'/%3E%3Ccircle cx='23' cy='23' r='1.5'/%3E%3C/g%3E%3C/svg%3E\")" }}
         />
-        <div className="absolute top-[-30px] right-[-30px] w-48 h-48 bg-white/10 rounded-full blur-2xl" />
-        <div className="absolute bottom-[-20px] left-[30%] w-32 h-32 bg-violet-400/20 rounded-full blur-xl" />
+        <div className="absolute top-[-30px] right-[-30px] w-48 h-48 rounded-full blur-2xl" style={{ background: 'rgba(6,182,212,0.12)' }} />
+        <div className="absolute bottom-[-20px] left-[30%] w-32 h-32 rounded-full blur-xl" style={{ background: 'rgba(99,102,241,0.12)' }} />
         <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <p className="text-indigo-200 text-sm font-medium mb-1">
+            <p className="text-xs font-medium mb-1" style={{ color: 'rgba(6,182,212,0.7)' }}>
               <Calendar size={13} className="inline mr-1.5 -mt-0.5" />
               {today.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </p>
             <h2 className="text-2xl sm:text-3xl font-black mb-1">
               Good {today.getHours() < 12 ? 'morning' : today.getHours() < 17 ? 'afternoon' : 'evening'}, {user?.name?.split(' ')[0]} 👋
             </h2>
-            <p className="text-indigo-200 text-sm max-w-sm">
+            <p className="text-sm max-w-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>
               Your payroll dashboard is all up to date. Here's what's happening today.
             </p>
           </div>
           <div className="flex gap-3 flex-shrink-0">
-            <a href="/payroll" className="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-indigo-700 rounded-xl text-sm font-bold shadow hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+            <a href="/payroll" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 hover:-translate-y-0.5"
+                style={{ background: 'linear-gradient(135deg,#06b6d4,#3b82f6)', color: '#fff', boxShadow: '0 0 20px rgba(6,182,212,0.3)' }}>
               Run Payroll <ChevronRight size={14} />
             </a>
           </div>
@@ -217,23 +226,28 @@ export default function Dashboard() {
           </div>
 
           {/* Chart area */}
-          <div className="relative h-56 bg-gradient-to-b from-indigo-50/60 to-transparent rounded-xl border border-slate-100 flex items-end px-4 pb-4 gap-2 overflow-hidden">
+          <div className="relative h-56 rounded-xl flex items-end px-4 pb-4 gap-2 overflow-hidden"
+            style={{ background: 'rgba(6,182,212,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+          >
             {/* Y-axis guide lines */}
             {[75, 50, 25].map((p) => (
               <div
                 key={p}
-                className="absolute left-4 right-4 border-t border-dashed border-slate-200"
-                style={{ bottom: `${p}%` }}
+                className="absolute left-4 right-4 border-t border-dashed"
+                style={{ bottom: `${p}%`, borderColor: 'rgba(255,255,255,0.06)' }}
               />
             ))}
             {/* Bars */}
             {[42, 58, 50, 68, 62, 78, 70, 85, 80, 90, 88, 95].map((h, i) => (
               <div key={i} className="relative flex-1 group">
                 <div
-                  className="w-full rounded-t-lg bg-gradient-to-t from-indigo-600 to-indigo-400 transition-all duration-500 hover:from-violet-600 hover:to-violet-400 cursor-pointer"
-                  style={{ height: `${h}%` }}
+                  className="w-full rounded-t-lg transition-all duration-500 cursor-pointer"
+                  style={{ height: `${h}%`, background: 'linear-gradient(to top, #06b6d4, #818cf8)' }}
+                  onMouseEnter={e => e.currentTarget.style.background='linear-gradient(to top, #0ea5e9, #a78bfa)'}
+                  onMouseLeave={e => e.currentTarget.style.background='linear-gradient(to top, #06b6d4, #818cf8)'}
                 />
-                <div className="absolute -top-7 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white text-xs rounded px-1.5 py-0.5 whitespace-nowrap pointer-events-none z-10">
+                <div className="absolute -top-7 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity rounded px-1.5 py-0.5 whitespace-nowrap pointer-events-none z-10 text-xs text-white"
+                  style={{ background: 'rgba(13,21,38,0.95)', border: '1px solid rgba(255,255,255,0.1)' }}>
                   {h}k
                 </div>
               </div>
@@ -243,7 +257,7 @@ export default function Dashboard() {
           {/* Month labels */}
           <div className="flex gap-2 px-4 mt-2">
             {MONTHS.map((m) => (
-              <span key={m} className="flex-1 text-center text-[10px] text-slate-400 font-medium">{m}</span>
+              <span key={m} className="flex-1 text-center text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.25)' }}>{m}</span>
             ))}
           </div>
         </div>
@@ -255,12 +269,12 @@ export default function Dashboard() {
           <div className="space-y-4">
             {RECENT_ACTIVITY.map(({ text, time, icon: Icon, color, bg }, i) => (
               <div key={i} className="flex items-start gap-3 group">
-                <div className={`w-8 h-8 rounded-lg ${bg} flex items-center justify-center flex-shrink-0 mt-0.5`}>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: bg }}>
                   <Icon size={14} className={color} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-slate-700 font-medium leading-snug">{text}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">{time}</p>
+                  <p className="text-sm font-medium leading-snug" style={{ color: 'rgba(255,255,255,0.75)' }}>{text}</p>
+                  <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>{time}</p>
                 </div>
               </div>
             ))}
@@ -271,23 +285,26 @@ export default function Dashboard() {
       {/* ── Quick Access ─────────────────────────────────────────────── */}
       <div className="grid sm:grid-cols-3 gap-4 animate-fade-in-up animation-delay-400">
         {[
-          { href: '/employees', icon: Users,      label: 'View All Employees', desc: 'Manage team members',    color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100 hover:border-indigo-300' },
-          { href: '/payroll',   icon: DollarSign, label: 'Payroll Processing',  desc: 'Generate & view payslips', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100 hover:border-emerald-300' },
-          { href: '/assets',    icon: Package,    label: 'Asset Registry',      desc: 'Track company assets',  color: 'text-violet-600', bg: 'bg-violet-50', border: 'border-violet-100 hover:border-violet-300' },
-        ].map(({ href, icon: Icon, label, desc, color, bg, border }) => (
+          { href: '/employees', icon: Users,      label: 'View All Employees', desc: 'Manage team members',    iconColor: 'text-cyan-400',    iconBg: 'rgba(6,182,212,0.1)',    border: 'rgba(6,182,212,0.15)' },
+          { href: '/payroll',   icon: DollarSign, label: 'Payroll Processing',  desc: 'Generate & view payslips', iconColor: 'text-emerald-400', iconBg: 'rgba(52,211,153,0.1)',  border: 'rgba(52,211,153,0.15)' },
+          { href: '/assets',    icon: Package,    label: 'Asset Registry',      desc: 'Track company assets',  iconColor: 'text-violet-400',  iconBg: 'rgba(167,139,250,0.1)', border: 'rgba(167,139,250,0.15)' },
+        ].map(({ href, icon: Icon, label, desc, iconColor, iconBg, border }) => (
           <a
             key={href}
             href={href}
-            className={`flex items-center gap-4 p-5 bg-white rounded-2xl border ${border} shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300 group`}
+            className="flex items-center gap-4 p-5 rounded-2xl transition-all duration-300 group hover:-translate-y-0.5"
+            style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${border}` }}
+            onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.04)'; e.currentTarget.style.boxShadow=`0 0 24px ${border}`; }}
+            onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,0.02)'; e.currentTarget.style.boxShadow=''; }}
           >
-            <div className={`w-11 h-11 rounded-xl ${bg} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-200`}>
-              <Icon size={20} className={color} />
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-200" style={{ background: iconBg }}>
+              <Icon size={20} className={iconColor} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-slate-800">{label}</p>
-              <p className="text-xs text-slate-400 mt-0.5">{desc}</p>
+              <p className="text-sm font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>{label}</p>
+              <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>{desc}</p>
             </div>
-            <ChevronRight size={16} className="text-slate-300 group-hover:text-slate-500 transition-colors flex-shrink-0" />
+            <ChevronRight size={16} className="flex-shrink-0 transition-colors" style={{ color: 'rgba(255,255,255,0.2)' }} />
           </a>
         ))}
       </div>

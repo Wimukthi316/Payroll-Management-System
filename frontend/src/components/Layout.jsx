@@ -6,7 +6,7 @@ export default function Layout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div className="flex h-screen overflow-hidden" style={{ background: '#050810' }}>
       {/* Sidebar */}
       <Sidebar
         mobileOpen={mobileOpen}

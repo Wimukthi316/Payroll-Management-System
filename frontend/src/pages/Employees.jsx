@@ -91,14 +91,17 @@ function EmployeeModal({ open, onClose, onSave, initial, saving }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-[0_30px_80px_rgb(0,0,0,0.18)] w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up">
+      <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 sticky top-0 bg-white z-10 rounded-t-2xl">
+        <div className="flex items-center justify-between px-6 py-5 sticky top-0 z-10 rounded-t-2xl" style={{ background: '#0a1020', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
           <div>
-            <h2 className="text-lg font-bold text-slate-800">{isEdit ? 'Edit Employee' : 'Add New Employee'}</h2>
-            <p className="text-xs text-slate-400 mt-0.5">{isEdit ? 'Update employee information' : 'Fill in the details below'}</p>
+            <h2 className="text-lg font-bold" style={{ color: 'rgba(255,255,255,0.9)' }}>{isEdit ? 'Edit Employee' : 'Add New Employee'}</h2>
+            <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>{isEdit ? 'Update employee information' : 'Fill in the details below'}</p>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 flex items-center justify-center transition-colors">
+          <button onClick={onClose} className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors" style={{ color: 'rgba(255,255,255,0.35)' }}
+            onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.06)'; e.currentTarget.style.color='rgba(255,255,255,0.8)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color='rgba(255,255,255,0.35)'; }}
+          >
             <X size={18} />
           </button>
         </div>
@@ -115,7 +118,7 @@ function EmployeeModal({ open, onClose, onSave, initial, saving }) {
           <div className="sm:col-span-2">
             <label className="label">Date Joined</label>
             <div className="relative">
-              <Calendar size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+              <Calendar size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />
               <input
                 name="dateJoined"
                 type="date"
@@ -125,7 +128,7 @@ function EmployeeModal({ open, onClose, onSave, initial, saving }) {
               />
             </div>
           </div>
-          <div className="sm:col-span-2 flex gap-3 justify-end pt-2 border-t border-slate-100">
+          <div className="sm:col-span-2 flex gap-3 justify-end pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
             <button type="submit" disabled={saving} className="btn-primary">
               {saving
@@ -146,12 +149,12 @@ function DeleteModal({ employee, onClose, onConfirm, loading }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-[0_30px_80px_rgb(0,0,0,0.18)] w-full max-w-sm p-6 animate-fade-in-up text-center">
-        <div className="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-4">
-          <AlertTriangle size={24} className="text-red-500" />
+      <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-sm p-6 animate-fade-in-up text-center" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
+        <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(239,68,68,0.1)' }}>
+          <AlertTriangle size={24} className="text-red-400" />
         </div>
-        <h3 className="text-lg font-bold text-slate-800 mb-2">Delete Employee</h3>
-        <p className="text-sm text-slate-500 mb-6">
+        <h3 className="text-lg font-bold mb-2" style={{ color: 'rgba(255,255,255,0.9)' }}>Delete Employee</h3>
+        <p className="text-sm mb-6" style={{ color: 'rgba(255,255,255,0.45)' }}>
           Are you sure you want to delete <strong>{employee.firstName} {employee.lastName}</strong>? This action cannot be undone.
         </p>
         <div className="flex gap-3">
@@ -274,7 +277,7 @@ export default function Employees() {
     <div className="page-container space-y-6">
       {/* Toast */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-white border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl px-5 py-3.5 text-sm font-medium text-slate-800 flex items-center gap-3 animate-fade-in-up">
+        <div className="fixed bottom-6 right-6 z-50 rounded-2xl px-5 py-3.5 text-sm font-medium flex items-center gap-3 animate-fade-in-up" style={{ background: '#0d1526', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.85)', boxShadow: '0 8px 30px rgba(0,0,0,0.4)' }}>
           <span className="w-2 h-2 rounded-full bg-emerald-500" />
           {toast}
         </div>
@@ -313,11 +316,13 @@ export default function Employees() {
             <button
               key={r}
               onClick={() => setRoleFilter(r)}
-              className={`px-3.5 py-2 rounded-lg text-xs font-semibold border transition-all duration-200 ${
-                roleFilter === r
-                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-btn'
-                  : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'
-              }`}
+              className="px-3.5 py-2 rounded-lg text-xs font-semibold transition-all duration-200"
+              style={roleFilter === r
+                ? { background: 'linear-gradient(135deg,#06b6d4,#3b82f6)', color: '#fff', boxShadow: '0 0 16px rgba(6,182,212,0.3)' }
+                : { background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.08)' }
+              }
+              onMouseEnter={e => { if (roleFilter !== r) { e.currentTarget.style.background='rgba(255,255,255,0.07)'; e.currentTarget.style.color='rgba(255,255,255,0.8)'; } }}
+              onMouseLeave={e => { if (roleFilter !== r) { e.currentTarget.style.background='rgba(255,255,255,0.04)'; e.currentTarget.style.color='rgba(255,255,255,0.5)'; } }}
             >
               {r}
             </button>
@@ -353,8 +358,8 @@ export default function Employees() {
                 ? (
                   <tr>
                     <td colSpan={7} className="px-5 py-16 text-center">
-                      <div className="flex flex-col items-center gap-3 text-slate-400">
-                        <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center">
+                      <div className="flex flex-col items-center gap-3" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
                           <Search size={22} />
                         </div>
                         <p className="font-medium text-sm">No employees found</p>
@@ -365,41 +370,48 @@ export default function Employees() {
                 )
                 : filtered.map((emp) => (
                   <tr key={emp._id}>
-                    <td className="text-xs font-mono text-slate-400">{emp.employeeId}</td>
+                    <td className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>{emp.employeeId}</td>
                     <td>
                       <div className="flex items-center gap-3">
                         <img
                           src={getAvatar(emp.employeeId)}
                           alt={`${emp.firstName}`}
-                          className="w-8 h-8 rounded-full ring-2 ring-white shadow object-cover flex-shrink-0"
+                          className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                          style={{ boxShadow: '0 0 0 2px rgba(6,182,212,0.3)' }}
                         />
                         <div className="min-w-0">
-                          <p className="font-semibold text-slate-800 truncate">
+                          <p className="font-semibold truncate" style={{ color: 'rgba(255,255,255,0.85)' }}>
                             {emp.firstName} {emp.lastName}
                           </p>
-                          <p className="text-xs text-slate-400 truncate hidden sm:block">{emp.email}</p>
+                          <p className="text-xs truncate hidden sm:block" style={{ color: 'rgba(255,255,255,0.3)' }}>{emp.email}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="hidden md:table-cell text-slate-500 truncate max-w-[180px]">{emp.email}</td>
+                    <td className="hidden md:table-cell truncate max-w-[180px]" style={{ color: 'rgba(255,255,255,0.35)' }}>{emp.email}</td>
                     <td>
                       <span className={ROLE_BADGE[emp.role] ?? 'badge-slate'}>{emp.role}</span>
                     </td>
-                    <td className="text-slate-500">{emp.department || '—'}</td>
-                    <td className="font-semibold text-slate-700">
+                    <td style={{ color: 'rgba(255,255,255,0.45)' }}>{emp.department || '—'}</td>
+                    <td className="font-semibold" style={{ color: 'rgba(255,255,255,0.8)' }}>
                       {emp.basicSalary != null ? `$${Number(emp.basicSalary).toLocaleString()}` : '—'}
                     </td>
                     <td>
                       <div className="flex items-center gap-1.5">
                         <button
                           onClick={() => { setEditTarget(emp); setModalOpen(true); }}
-                          className="w-8 h-8 rounded-lg text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 flex items-center justify-center transition-all duration-150"
+                          className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-150"
+                          style={{ color: 'rgba(255,255,255,0.3)' }}
+                          onMouseEnter={e => { e.currentTarget.style.background='rgba(6,182,212,0.1)'; e.currentTarget.style.color='#22d3ee'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color='rgba(255,255,255,0.3)'; }}
                         >
                           <Pencil size={14} />
                         </button>
                         <button
                           onClick={() => setDeleteTarget(emp)}
-                          className="w-8 h-8 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-all duration-150"
+                          className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-150"
+                          style={{ color: 'rgba(255,255,255,0.3)' }}
+                          onMouseEnter={e => { e.currentTarget.style.background='rgba(239,68,68,0.1)'; e.currentTarget.style.color='#f87171'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color='rgba(255,255,255,0.3)'; }}
                         >
                           <Trash2 size={14} />
                         </button>
@@ -412,7 +424,7 @@ export default function Employees() {
           </table>
         </div>
         {!loading && filtered.length > 0 && (
-          <div className="px-5 py-3 border-t border-slate-50 text-xs text-slate-400 flex items-center justify-between">
+          <div className="px-5 py-3 text-xs flex items-center justify-between" style={{ borderTop: '1px solid rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.3)' }}>
             <span>Showing {filtered.length} of {employees.length} records</span>
           </div>
         )}
