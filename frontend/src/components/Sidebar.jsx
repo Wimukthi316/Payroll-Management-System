@@ -21,7 +21,7 @@ const SIDEBAR_STYLE = {
   background: 'rgba(5,8,16,0.97)',
   backdropFilter: 'blur(24px)',
   borderRight: '1px solid rgba(255,255,255,0.06)',
-  boxShadow: '4px 0 40px rgba(0,0,0,0.4)',
+  boxShadow: '2px 0 12px rgba(0,0,0,0.3)',
 };
 
 /**
@@ -130,7 +130,7 @@ export default function Sidebar({ mobileOpen, onClose, collapsed }) {
       {/* ── Mobile backdrop ───────────────────────────────────────── */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 lg:hidden"
+          className="fixed inset-0 z-[45] lg:hidden"
           style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
           onClick={onClose}
         />
@@ -143,7 +143,7 @@ export default function Sidebar({ mobileOpen, onClose, collapsed }) {
        */}
       <div
         className={`
-          fixed inset-y-0 left-0 z-50 flex flex-col w-64
+          fixed inset-y-0 left-0 z-[50] flex flex-col w-64
           transition-transform duration-300 ease-in-out
           lg:hidden
           ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -163,7 +163,7 @@ export default function Sidebar({ mobileOpen, onClose, collapsed }) {
         className={`
           hidden lg:flex flex-col flex-shrink-0
           transition-all duration-300 ease-in-out
-          relative
+          relative z-20
           ${collapsed ? 'w-[72px]' : 'w-64'}
         `}
         style={SIDEBAR_STYLE}

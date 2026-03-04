@@ -54,6 +54,21 @@ const payrollSchema = new mongoose.Schema(
       default: 0,
       min: [0, 'Tax deduction cannot be negative'],
     },
+    grossPay: {
+      type: Number,
+      default: 0,
+      min: [0, 'Gross pay cannot be negative'],
+    },
+    totalDeductions: {
+      type: Number,
+      default: 0,
+      min: [0, 'Total deductions cannot be negative'],
+    },
+    netPay: {
+      type: Number,
+      default: 0,
+      min: [0, 'Net pay cannot be negative'],
+    },
     netSalary: {
       type: Number,
       required: [true, 'Net salary is required'],

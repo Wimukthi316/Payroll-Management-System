@@ -73,11 +73,18 @@ const calculateAndGeneratePayroll = async (req, res) => {
     const hourlyRate    = basicSalary / (workingDays * hoursPerDay);
     const overtimePay   = Math.round(overtimeHours * hourlyRate * 1.5);
 
-    const grossSalary   = basicSalary + overtimePay;
-    const epfDeduction  = Math.round(grossSalary * EPF_EMPLOYEE_RATE);
-    const etfContribution = Math.round(grossSalary * ETF_RATE);
-    const taxDeduction  = calculateMonthlyTax(grossSalary);
-    const netSalary     = grossSalary - epfDeduction - taxDeduction;
+    const grossSalary     = basicSalary + overtimePay;
+    const epfDeduction    = Math.round(grossSalary * EPF_EMPLOYEE_RATE);  // 8% — deducted from employee
+    const etfContribution = Math.round(grossSalary * ETF_RATE);           // 3% — employer bears this; NOT deducted from employee
+    const taxDeduction    = calculateMonthlyTax(grossSalary);             // PAYE — deducted from employee
+
+    // Net Pay = Gross - EPF(employee) - PAYE tax.  ETF is excluded — it is the employer's cost.
+    const netSalary       = grossSalary - epfDeduction - taxDeduction;
+
+    // Canonical frontend-expected fields
+    const grossPay        = grossSalary;
+    const totalDeductions = epfDeduction + taxDeduction;  // ETF intentionally excluded
+    const netPay          = netSalary;
 
     const payroll = await Payroll.create({
       employee:        employeeId,
@@ -89,6 +96,9 @@ const calculateAndGeneratePayroll = async (req, res) => {
       epfDeduction,
       etfContribution,
       taxDeduction,
+      grossPay,
+      totalDeductions,
+      netPay,
       netSalary,
       status:          'Draft',
     });
@@ -118,7 +128,19 @@ const createPayroll = async (req, res) => {
         message: `Payroll for ${month} ${year} already exists for this employee.`,
       });
     }
-    const payroll = await Payroll.create(req.body);
+
+    // Compute canonical fields from whatever the body provides
+    const basicSalary    = Number(req.body.basicSalary   ?? 0);
+    const overtimePay    = Number(req.body.overtimePay   ?? 0);
+    const epfDeduction   = Number(req.body.epfDeduction  ?? 0);  // 8% employee share
+    const taxDeduction   = Number(req.body.taxDeduction  ?? 0);  // PAYE tax
+    // ETF is employer-only — it must NOT be included in totalDeductions or netPay.
+    const grossPay        = basicSalary + overtimePay;
+    const totalDeductions = epfDeduction + taxDeduction;          // ETF excluded
+    const netPay          = grossPay - totalDeductions;
+    const netSalary       = req.body.netSalary != null ? Number(req.body.netSalary) : netPay;
+
+    const payroll = await Payroll.create({ ...req.body, grossPay, totalDeductions, netPay, netSalary });
     const populated = await payroll.populate('employee', 'firstName lastName employeeId department');
     res.status(201).json({ success: true, data: populated });
   } catch (error) {

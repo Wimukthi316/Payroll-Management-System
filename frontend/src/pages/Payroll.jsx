@@ -71,7 +71,7 @@ function GenerateModal({ open, onClose, employees, onDone }) {
         year:         Number(form.year),
         overtimeHours: Number(form.overtimeHours),
       });
-      setResult(res.data);
+      setResult(res.data.data);
     } catch (err) {
       setError(err?.response?.data?.message ?? 'Failed to generate payroll.');
     } finally {
@@ -89,14 +89,14 @@ function GenerateModal({ open, onClose, employees, onDone }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={handleClose} />
-      <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-lg animate-fade-in-up overflow-hidden" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
+      <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-full sm:max-w-lg animate-fade-in-up overflow-hidden flex flex-col max-h-[90vh] sm:max-h-[85vh]" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
           <div>
             <h2 className="text-lg font-bold" style={{ color: 'rgba(255,255,255,0.9)' }}>Generate Payroll</h2>
-            <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Auto-calculate salary, EPF, ETF, and net pay</p>
+            <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>ETF is employer-only — not deducted from employee net pay</p>
           </div>
           <button onClick={handleClose} className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors" style={{ color: 'rgba(255,255,255,0.35)' }}
             onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.06)'; e.currentTarget.style.color='rgba(255,255,255,0.8)'; }}
@@ -106,7 +106,7 @@ function GenerateModal({ open, onClose, employees, onDone }) {
           </button>
         </div>
 
-        <div className="p-6">
+        <div className="p-6 overflow-y-auto flex-1">
           {!result ? (
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
@@ -200,23 +200,33 @@ function GenerateModal({ open, onClose, employees, onDone }) {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { label: 'Basic Salary',   value: fmt(result.basicSalary) },
-                  { label: 'Overtime Pay',   value: fmt(result.overtimePay) },
-                  { label: 'EPF Deduction',  value: fmt(result.epfDeduction) },
-                  { label: 'ETF Contribution', value: fmt(result.etfContribution) },
-                  { label: 'Gross Pay',      value: fmt(result.grossPay) },
-                  { label: 'Total Deductions', value: fmt(result.totalDeductions) },
+                  { label: 'Basic Salary',          value: fmt(result.basicSalary) },
+                  { label: 'Overtime Pay',           value: fmt(result.overtimePay) },
+                  { label: 'Gross Pay',              value: fmt(result.grossPay) },
+                  { label: 'EPF Deduction (8%)',     value: fmt(result.epfDeduction) },
+                  { label: 'Tax Deduction (PAYE)',   value: fmt(result.taxDeduction) },
+                  { label: 'Total Deductions',       value: fmt(result.totalDeductions) },
+                  { label: 'ETF (Employer Only ✦)',  value: fmt(result.etfContribution) },
+                  { label: 'Net Pay',                value: fmt(result.netPay) },
                 ].map(({ label, value }) => (
-                  <div key={label} className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                    <p className="text-xs font-medium mb-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>{label}</p>
-                    <p className="text-sm font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>{value}</p>
+                  <div key={label} className="rounded-xl p-3" style={{
+                    background: label === 'Net Pay'
+                      ? 'linear-gradient(135deg,rgba(6,182,212,0.12),rgba(99,102,241,0.08))'
+                      : label.startsWith('ETF')
+                      ? 'rgba(250,204,21,0.05)'
+                      : 'rgba(255,255,255,0.04)',
+                    border: label === 'Net Pay'
+                      ? '1px solid rgba(6,182,212,0.25)'
+                      : label.startsWith('ETF')
+                      ? '1px solid rgba(250,204,21,0.15)'
+                      : '1px solid rgba(255,255,255,0.06)',
+                  }}>
+                    <p className="text-xs font-medium mb-0.5" style={{ color: label === 'Net Pay' ? '#22d3ee' : label.startsWith('ETF') ? '#fbbf24' : 'rgba(255,255,255,0.35)' }}>{label}</p>
+                    <p className="text-sm font-bold" style={{ color: label === 'Net Pay' ? '#22d3ee' : label.startsWith('ETF') ? '#fcd34d' : 'rgba(255,255,255,0.85)' }}>{value}</p>
                   </div>
                 ))}
               </div>
-              <div className="flex items-center justify-between p-4 rounded-xl" style={{ background: 'linear-gradient(135deg,rgba(6,182,212,0.1),rgba(99,102,241,0.08))', border: '1px solid rgba(6,182,212,0.2)' }}>
-                <p className="text-sm font-bold" style={{ color: '#22d3ee' }}>Net Pay</p>
-                <p className="text-xl font-black" style={{ color: '#22d3ee' }}>{fmt(result.netPay)}</p>
-              </div>
+              <p className="text-xs text-center" style={{ color: 'rgba(255,255,255,0.25)' }}>✦ ETF is paid by the employer — it does not reduce your take-home salary.</p>
               <button onClick={handleClose} className="btn-primary w-full justify-center">Done</button>
             </div>
           )}
@@ -267,7 +277,7 @@ export default function Payroll() {
   }, [records, search, monthFilter]);
 
   const totalNet = useMemo(
-    () => filtered.reduce((s, r) => s + (r.netPay ?? 0), 0),
+    () => filtered.reduce((s, r) => s + (r.netPay ?? r.netSalary ?? 0), 0),
     [filtered],
   );
 
@@ -387,11 +397,11 @@ export default function Payroll() {
                       </td>
                       <td className="font-medium">{fmt(rec.basicSalary)}</td>
                       <td>{fmt(rec.overtimePay)}</td>
-                      <td className="font-semibold" style={{ color: 'rgba(255,255,255,0.8)' }}>{fmt(rec.grossPay)}</td>
+                      <td className="font-semibold" style={{ color: 'rgba(255,255,255,0.8)' }}>{fmt(rec.grossPay ?? rec.basicSalary)}</td>
                       <td className="text-red-500">{fmt(rec.epfDeduction)}</td>
-                    <td>
+                      <td>
                         <span className="inline-block px-2.5 py-1 rounded-lg font-bold text-sm" style={{ background: 'rgba(52,211,153,0.1)', color: '#34d399' }}>
-                          {fmt(rec.netPay)}
+                          {fmt(rec.netPay ?? rec.netSalary)}
                         </span>
                       </td>
                       <td>

@@ -127,11 +127,11 @@ function EmployeeModal({ open, onClose, onSave, initial, saving }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={onClose}>
-      <div className="relative mt-60 w-full max-w-3xl bg-slate-900 rounded-2xl shadow-2xl p-6 animate-fade-in-up flex flex-col max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6" onClick={onClose}>
+      <div className="relative w-full max-w-full sm:max-w-lg md:max-w-3xl bg-slate-900 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] sm:max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
 
         {/* ── Sticky Header ── */}
-        <div className="shrink-0 flex items-center justify-between px-6 py-5">
+        <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-slate-700/60">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center"
               style={{ background: 'linear-gradient(135deg,rgba(99,102,241,0.25),rgba(139,92,246,0.15))', border: '1px solid rgba(99,102,241,0.3)' }}>
@@ -157,9 +157,8 @@ function EmployeeModal({ open, onClose, onSave, initial, saving }) {
         </div>
 
         {/* ── Scrollable Form Area ── */}
-        <div className="p-6 overflow-y-auto flex-1">
-          <form id="employee-form" onSubmit={handleSubmit} noValidate>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form id="employee-form" onSubmit={handleSubmit} noValidate className="flex flex-col flex-1 overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-y-auto p-2">
             <SectionDivider label="Identity" />
             <EField name="employeeId" label="Employee ID" icon={Briefcase} required form={form} errors={errors} onChange={handleChange} />
             <EField name="role" label="Role" options={['Admin', 'HR', 'Accountant']} required form={form} errors={errors} onChange={handleChange} />
@@ -174,27 +173,26 @@ function EmployeeModal({ open, onClose, onSave, initial, saving }) {
             <EField name="department" label="Department" icon={Building2} form={form} errors={errors} onChange={handleChange} />
             <EField name="basicSalary" label="Basic Salary ($)" icon={DollarSign} type="number" required form={form} errors={errors} onChange={handleChange} />
             <EField name="dateJoined" label="Date Joined" icon={Calendar} type="date" half={false} form={form} errors={errors} onChange={handleChange} />
-            </div>
-          </form>
-        </div>
+          </div>
 
-        {/* ── Sticky Footer ── */}
-        <div className="shrink-0 flex items-center justify-end gap-3 pt-5">
-          <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
-          <button
-            type="submit" form="employee-form" disabled={saving}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all duration-200 disabled:opacity-60"
-            style={{ background: 'linear-gradient(135deg,#6366f1,#818cf8)', boxShadow: '0 0 20px rgba(99,102,241,0.35)' }}
-            onMouseEnter={e => { if (!saving) e.currentTarget.style.boxShadow='0 0 28px rgba(99,102,241,0.55)'; }}
-            onMouseLeave={e => { e.currentTarget.style.boxShadow='0 0 20px rgba(99,102,241,0.35)'; }}
-          >
-            {saving
-              ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-              : <><Save size={14} /> {isEdit ? 'Save Changes' : 'Add Employee'}</>
-            }
-          </button>
-        </div>
+          {/* ── Sticky Footer ── */}
+          <div className="shrink-0 flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-700/60">
+            <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
+            <button
+              type="submit" disabled={saving}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all duration-200 disabled:opacity-60"
+              style={{ background: 'linear-gradient(135deg,#6366f1,#818cf8)', boxShadow: '0 0 20px rgba(99,102,241,0.35)' }}
+              onMouseEnter={e => { if (!saving) e.currentTarget.style.boxShadow='0 0 28px rgba(99,102,241,0.55)'; }}
+              onMouseLeave={e => { e.currentTarget.style.boxShadow='0 0 20px rgba(99,102,241,0.35)'; }}
+            >
+              {saving
+                ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                : <><Save size={14} /> {isEdit ? 'Save Changes' : 'Add Employee'}</>
+              }
+            </button>
+          </div>
 
+        </form>
       </div>
     </div>
   );

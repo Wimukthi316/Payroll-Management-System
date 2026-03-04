@@ -104,7 +104,7 @@ export default function Dashboard() {
         const payrolls  = payRes.status === 'fulfilled' ? (Array.isArray(payRes.value.data?.data) ? payRes.value.data.data : []) : [];
         const assets    = astRes.status === 'fulfilled' ? (astRes.value.data?.count ?? astRes.value.data?.data?.length ?? 0) : 0;
         const totalPay  = Array.isArray(payrolls)
-          ? payrolls.reduce((s, p) => s + (p.netPay ?? p.basicSalary ?? 0), 0)
+          ? payrolls.reduce((s, p) => s + (p.netPay ?? p.netSalary ?? p.basicSalary ?? 0), 0)
           : 0;
 
         const monthIndexMap = {
@@ -118,7 +118,7 @@ export default function Dashboard() {
             const rawMonth = String(record.month ?? '').trim().toLowerCase();
             const index = monthIndexMap[rawMonth];
             if (index != null) {
-              grouped[index].netPay += Number(record.netPay ?? 0);
+              grouped[index].netPay += Number(record.netPay ?? record.netSalary ?? 0);
             }
           });
         }
