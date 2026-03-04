@@ -3,6 +3,27 @@ import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight, Zap, Building2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
+function SignUpField({ name, label, type = 'text', icon: Icon, placeholder, half, form, onChange, errors }) {
+  return (
+    <div className={half ? '' : 'md:col-span-2'}>
+      <label htmlFor={name} className="label">{label}</label>
+      <div className="relative">
+        {Icon && <Icon size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />}
+        <input
+          id={name}
+          name={name}
+          type={type}
+          value={form[name]}
+          onChange={onChange}
+          placeholder={placeholder}
+          className={`input pl-10 ${errors?.[name] ? 'border-red-300 focus:ring-red-300 focus:border-red-400' : ''}`}
+        />
+      </div>
+      {errors?.[name] && <p className="text-xs text-red-500 mt-1">{errors[name]}</p>}
+    </div>
+  );
+}
+
 export default function SignUp() {
   const [form, setForm] = useState({
     firstName: '', lastName: '', company: '', email: '', password: '', confirmPassword: '',
@@ -43,24 +64,6 @@ export default function SignUp() {
     }
   }
 
-  const Field = ({ name, label, type = 'text', icon: Icon, placeholder, half }) => (
-    <div className={half ? '' : 'md:col-span-2'}>
-      <label htmlFor={name} className="label">{label}</label>
-      <div className="relative">
-        <Icon size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-        <input
-          id={name}
-          name={name}
-          type={type}
-          value={form[name]}
-          onChange={handleChange}
-          placeholder={placeholder}
-          className={`input pl-10 ${errors[name] ? 'border-red-300 focus:ring-red-300 focus:border-red-400' : ''}`}
-        />
-      </div>
-      {errors[name] && <p className="text-xs text-red-500 mt-1">{errors[name]}</p>}
-    </div>
-  );
 
   return (
     <div className="min-h-screen flex">
@@ -116,10 +119,10 @@ export default function SignUp() {
 
           <form onSubmit={handleSubmit} noValidate>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <Field name="firstName" label="First Name"    icon={User}      placeholder="Alex"          half />
-              <Field name="lastName"  label="Last Name"     icon={User}      placeholder="Johnson"       half />
-              <Field name="company"   label="Company (opt)" icon={Building2} placeholder="Acme Corp"     half />
-              <Field name="email"     label="Work Email"    icon={Mail}      placeholder="you@company.com" half type="email" />
+              <SignUpField name="firstName" label="First Name"    icon={User}      placeholder="Alex"          half form={form} onChange={handleChange} errors={errors} />
+              <SignUpField name="lastName"  label="Last Name"     icon={User}      placeholder="Johnson"       half form={form} onChange={handleChange} errors={errors} />
+              <SignUpField name="company"   label="Company (opt)" icon={Building2} placeholder="Acme Corp"     half form={form} onChange={handleChange} errors={errors} />
+              <SignUpField name="email"     label="Work Email"    icon={Mail}      placeholder="you@company.com" half type="email" form={form} onChange={handleChange} errors={errors} />
             </div>
 
             {/* Password */}

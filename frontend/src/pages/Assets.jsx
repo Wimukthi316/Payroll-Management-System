@@ -52,6 +52,32 @@ function EmptyState({ icon: Icon, label }) {
   );
 }
 
+/* ─── Reusable asset modal field ───────────────────────────────────────────── */
+function AssetModalField({ name, label, type = 'text', icon: Icon, options, col2, form, onChange }) {
+  return (
+    <div className={col2 ? 'sm:col-span-2' : ''}>
+      <label className="label">{label}</label>
+      {options ? (
+        <div className="relative">
+          <select name={name} value={form[name] ?? ''} onChange={onChange} className="input appearance-none pr-8">
+            {options.map((o) => <option key={o}>{o}</option>)}
+          </select>
+          <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+        </div>
+      ) : (
+        <div className="relative">
+          {Icon && <Icon size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />}
+          <input
+            name={name} type={type} value={form[name] ?? ''}
+            onChange={onChange}
+            className={`input ${Icon ? 'pl-10' : ''}`}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─── Asset Form Modal ──────────────────────────────────────────────────────── */
 const EMPTY_ASSET = {
   assetId: '', category: '', description: '', serialNumber: '',
@@ -61,7 +87,6 @@ const EMPTY_ASSET = {
 
 function AssetModal({ open, onClose, onSave, initial, saving }) {
   const [form, setForm] = useState(initial ?? EMPTY_ASSET);
-  useEffect(() => { setForm(initial ?? EMPTY_ASSET); }, [initial]);
   const isEdit = !!initial?._id;
 
   function handleChange(e) { setForm((f) => ({ ...f, [e.target.name]: e.target.value })); }
