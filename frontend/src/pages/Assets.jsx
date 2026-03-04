@@ -26,7 +26,7 @@ const STATUS_BADGE = {
 /* ─── Skeleton row ──────────────────────────────────────────────────────────── */
 function SkeletonRow({ cols = 6 }) {
   return (
-    <tr className="border-b border-slate-50">
+    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
       {Array.from({ length: cols }).map((_, i) => (
         <td key={i} className="px-5 py-4">
           <div className="skeleton h-4 rounded" style={{ width: 60 + i * 14 }} />
@@ -41,8 +41,8 @@ function EmptyState({ icon: Icon, label }) {
   return (
     <tr>
       <td colSpan={10} className="px-5 py-16 text-center">
-        <div className="flex flex-col items-center gap-3 text-slate-400">
-          <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3" style={{ color: 'rgba(255,255,255,0.25)' }}>
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
             <Icon size={22} />
           </div>
           <p className="font-medium text-sm">{label}</p>
@@ -62,11 +62,11 @@ function AssetModalField({ name, label, type = 'text', icon: Icon, options, col2
           <select name={name} value={form[name] ?? ''} onChange={onChange} className="input appearance-none pr-8">
             {options.map((o) => <option key={o}>{o}</option>)}
           </select>
-          <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+          <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />
         </div>
       ) : (
         <div className="relative">
-          {Icon && <Icon size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />}
+          {Icon && <Icon size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />}
           <input
             name={name} type={type} value={form[name] ?? ''}
             onChange={onChange}
@@ -96,13 +96,16 @@ function AssetModal({ open, onClose, onSave, initial, saving }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-[0_30px_80px_rgb(0,0,0,0.18)] w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10 rounded-t-2xl">
+      <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
+        <div className="flex items-center justify-between px-6 py-4 sticky top-0 z-10 rounded-t-2xl" style={{ background: '#0a1020', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
           <div>
-            <h3 className="text-lg font-bold text-slate-800">{isEdit ? 'Edit Asset' : 'Add New Asset'}</h3>
-            <p className="text-xs text-slate-400 mt-0.5">Fill in the asset details below</p>
+            <h3 className="text-lg font-bold" style={{ color: 'rgba(255,255,255,0.9)' }}>{isEdit ? 'Edit Asset' : 'Add New Asset'}</h3>
+            <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Fill in the asset details below</p>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-lg text-slate-400 hover:bg-slate-100 flex items-center justify-center transition-colors">
+          <button onClick={onClose} className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors" style={{ color: 'rgba(255,255,255,0.35)' }}
+            onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.06)'; e.currentTarget.style.color='rgba(255,255,255,0.8)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color='rgba(255,255,255,0.35)'; }}
+          >
             <X size={18} />
           </button>
         </div>
@@ -128,7 +131,7 @@ function AssetModal({ open, onClose, onSave, initial, saving }) {
               placeholder="Optional description…"
             />
           </div>
-          <div className="sm:col-span-2 flex gap-3 justify-end pt-2 border-t border-slate-100">
+          <div className="sm:col-span-2 flex gap-3 justify-end pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
             <button type="submit" disabled={saving} className="btn-primary">
               {saving ? <svg className="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
@@ -147,12 +150,12 @@ function DeleteModal({ item, label, onClose, onConfirm, loading }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-[0_30px_80px_rgb(0,0,0,0.18)] w-full max-w-sm p-6 animate-fade-in-up text-center">
-        <div className="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-4">
-          <AlertTriangle size={24} className="text-red-500" />
+      <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-sm p-6 animate-fade-in-up text-center" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
+        <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(239,68,68,0.1)' }}>
+          <AlertTriangle size={24} className="text-red-400" />
         </div>
-        <h3 className="text-lg font-bold text-slate-800 mb-2">Delete {label}</h3>
-        <p className="text-sm text-slate-500 mb-6">This action cannot be undone.</p>
+        <h3 className="text-lg font-bold mb-2" style={{ color: 'rgba(255,255,255,0.9)' }}>Delete {label}</h3>
+        <p className="text-sm mb-6" style={{ color: 'rgba(255,255,255,0.45)' }}>This action cannot be undone.</p>
         <div className="flex gap-3">
           <button onClick={onClose} className="btn-secondary flex-1 justify-center">Cancel</button>
           <button onClick={onConfirm} disabled={loading} className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors disabled:opacity-60">
@@ -210,7 +213,7 @@ function AllAssetsTab({ toast }) {
     <>
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
         <div className="relative flex-1 max-w-sm">
-          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search assets…" className="input pl-10" />
         </div>
         <button onClick={() => { setEditTarget(null); setModalOpen(true); }} className="btn-primary">
@@ -228,19 +231,25 @@ function AllAssetsTab({ toast }) {
                filtered.length === 0 ? <EmptyState icon={Package} label="No assets found" /> :
                filtered.map((a) => (
                 <tr key={a._id}>
-                  <td className="font-mono text-xs text-slate-500">{a.assetId}</td>
-                  <td className="font-semibold text-slate-800">{a.category}</td>
-                  <td className="text-slate-500">{fmtDate(a.purchaseDate)}</td>
+                  <td className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>{a.assetId}</td>
+                  <td className="font-semibold" style={{ color: 'rgba(255,255,255,0.85)' }}>{a.category}</td>
+                  <td style={{ color: 'rgba(255,255,255,0.4)' }}>{fmtDate(a.purchaseDate)}</td>
                   <td className="font-medium">{fmt(a.purchaseCost)}</td>
-                  <td className="text-slate-500">{a.assignedLocation || '—'}</td>
-                  <td className="text-slate-500">{a.responsiblePerson || '—'}</td>
+                  <td style={{ color: 'rgba(255,255,255,0.4)' }}>{a.assignedLocation || '—'}</td>
+                  <td style={{ color: 'rgba(255,255,255,0.4)' }}>{a.responsiblePerson || '—'}</td>
                   <td><span className={STATUS_BADGE[a.status] ?? 'badge-slate'}>{a.status ?? 'Active'}</span></td>
                   <td>
                     <div className="flex items-center gap-1.5">
-                      <button onClick={() => { setEditTarget(a); setModalOpen(true); }} className="w-8 h-8 rounded-lg text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 flex items-center justify-center transition-all">
+                      <button onClick={() => { setEditTarget(a); setModalOpen(true); }} className="w-8 h-8 rounded-lg flex items-center justify-center transition-all" style={{ color: 'rgba(255,255,255,0.3)' }}
+                        onMouseEnter={e => { e.currentTarget.style.background='rgba(6,182,212,0.1)'; e.currentTarget.style.color='#22d3ee'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color='rgba(255,255,255,0.3)'; }}
+                      >
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                       </button>
-                      <button onClick={() => setDeleteTarget(a)} className="w-8 h-8 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-all">
+                      <button onClick={() => setDeleteTarget(a)} className="w-8 h-8 rounded-lg flex items-center justify-center transition-all" style={{ color: 'rgba(255,255,255,0.3)' }}
+                        onMouseEnter={e => { e.currentTarget.style.background='rgba(239,68,68,0.1)'; e.currentTarget.style.color='#f87171'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color='rgba(255,255,255,0.3)'; }}
+                      >
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -310,13 +319,16 @@ function MaintenanceTab({ toast }) {
                records.length === 0 ? <EmptyState icon={Wrench} label="No maintenance records" /> :
                records.map((r) => (
                 <tr key={r._id}>
-                  <td className="font-medium text-slate-800">{r.asset?.assetId ?? r.asset ?? '—'}</td>
+                  <td className="font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>{r.asset?.assetId ?? r.asset ?? '—'}</td>
                   <td>{fmtDate(r.scheduledDate)}</td>
-                  <td className="text-slate-500 max-w-[220px] truncate">{r.description || '—'}</td>
+                  <td className="max-w-[220px] truncate" style={{ color: 'rgba(255,255,255,0.4)' }}>{r.description || '—'}</td>
                   <td>{fmt(r.cost)}</td>
                   <td><span className={r.status === 'Completed' ? 'badge-green' : r.status === 'In Progress' ? 'badge-amber' : 'badge-blue'}>{r.status}</span></td>
                   <td>
-                    <button onClick={() => setDeleteTarget(r)} className="w-8 h-8 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-all">
+                    <button onClick={() => setDeleteTarget(r)} className="w-8 h-8 rounded-lg flex items-center justify-center transition-all" style={{ color: 'rgba(255,255,255,0.3)' }}
+                      onMouseEnter={e => { e.currentTarget.style.background='rgba(239,68,68,0.1)'; e.currentTarget.style.color='#f87171'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color='rgba(255,255,255,0.3)'; }}
+                    >
                       <Trash2 size={14} />
                     </button>
                   </td>
@@ -330,10 +342,13 @@ function MaintenanceTab({ toast }) {
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setModalOpen(false)} />
-          <div className="relative bg-white rounded-2xl shadow-[0_30px_80px_rgb(0,0,0,0.18)] w-full max-w-md p-6 animate-fade-in-up">
+          <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-md p-6 animate-fade-in-up" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-bold text-slate-800">Schedule Maintenance</h3>
-              <button onClick={() => setModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100"><X size={17}/></button>
+              <h3 className="text-lg font-bold" style={{ color: 'rgba(255,255,255,0.9)' }}>Schedule Maintenance</h3>
+              <button onClick={() => setModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors" style={{ color: 'rgba(255,255,255,0.35)' }}
+                onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.06)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background=''; }}
+              ><X size={17}/></button>
             </div>
             <form onSubmit={handleSave} className="space-y-4">
               <div>
@@ -343,7 +358,7 @@ function MaintenanceTab({ toast }) {
                     <option value="">Select asset…</option>
                     {assets.map((a) => <option key={a._id} value={a._id}>{a.assetId} — {a.category}</option>)}
                   </select>
-                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />
                 </div>
               </div>
               <div>
@@ -365,11 +380,11 @@ function MaintenanceTab({ toast }) {
                     <select value={form.status} onChange={(e) => setForm((f) => ({...f, status: e.target.value}))} className="input appearance-none pr-8">
                       {['Scheduled', 'In Progress', 'Completed'].map((s) => <option key={s}>{s}</option>)}
                     </select>
-                    <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                    <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />
                   </div>
                 </div>
               </div>
-              <div className="flex gap-3 justify-end pt-2 border-t border-slate-100">
+              <div className="flex gap-3 justify-end pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                 <button type="button" onClick={() => setModalOpen(false)} className="btn-secondary">Cancel</button>
                 <button type="submit" disabled={saving} className="btn-primary">
                   {saving ? <svg className="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
@@ -438,13 +453,16 @@ function TransfersTab({ toast }) {
                records.length === 0 ? <EmptyState icon={ArrowLeftRight} label="No transfer records" /> :
                records.map((r) => (
                 <tr key={r._id}>
-                  <td className="font-medium text-slate-800">{r.asset?.assetId ?? r.asset ?? '—'}</td>
-                  <td className="text-slate-500">{r.fromLocation || '—'}</td>
-                  <td className="text-slate-700 font-medium">{r.toLocation || '—'}</td>
+                  <td className="font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>{r.asset?.assetId ?? r.asset ?? '—'}</td>
+                  <td style={{ color: 'rgba(255,255,255,0.4)' }}>{r.fromLocation || '—'}</td>
+                  <td className="font-medium" style={{ color: 'rgba(255,255,255,0.75)' }}>{r.toLocation || '—'}</td>
                   <td>{fmtDate(r.transferDate)}</td>
-                  <td className="text-slate-500">{r.transferredBy || '—'}</td>
+                  <td style={{ color: 'rgba(255,255,255,0.4)' }}>{r.transferredBy || '—'}</td>
                   <td>
-                    <button onClick={() => setDeleteTarget(r)} className="w-8 h-8 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-all">
+                    <button onClick={() => setDeleteTarget(r)} className="w-8 h-8 rounded-lg flex items-center justify-center transition-all" style={{ color: 'rgba(255,255,255,0.3)' }}
+                      onMouseEnter={e => { e.currentTarget.style.background='rgba(239,68,68,0.1)'; e.currentTarget.style.color='#f87171'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color='rgba(255,255,255,0.3)'; }}
+                    >
                       <Trash2 size={14} />
                     </button>
                   </td>
@@ -458,10 +476,13 @@ function TransfersTab({ toast }) {
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setModalOpen(false)} />
-          <div className="relative bg-white rounded-2xl shadow-[0_30px_80px_rgb(0,0,0,0.18)] w-full max-w-md p-6 animate-fade-in-up">
+          <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-md p-6 animate-fade-in-up" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-bold text-slate-800">Record Asset Transfer</h3>
-              <button onClick={() => setModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100"><X size={17}/></button>
+              <h3 className="text-lg font-bold" style={{ color: 'rgba(255,255,255,0.9)' }}>Record Asset Transfer</h3>
+              <button onClick={() => setModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors" style={{ color: 'rgba(255,255,255,0.35)' }}
+                onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.06)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background=''; }}
+              ><X size={17}/></button>
             </div>
             <form onSubmit={handleSave} className="space-y-4">
               <div>
@@ -471,7 +492,7 @@ function TransfersTab({ toast }) {
                     <option value="">Select asset…</option>
                     {assets.map((a) => <option key={a._id} value={a._id}>{a.assetId} — {a.category}</option>)}
                   </select>
-                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -482,7 +503,7 @@ function TransfersTab({ toast }) {
                 <div><label className="label">Transfer Date</label><input type="date" value={form.transferDate} onChange={(e) => setForm((f) => ({...f, transferDate: e.target.value}))} className="input" required /></div>
                 <div><label className="label">Transferred By</label><input value={form.transferredBy} onChange={(e) => setForm((f) => ({...f, transferredBy: e.target.value}))} className="input" placeholder="Name" /></div>
               </div>
-              <div className="flex gap-3 justify-end pt-2 border-t border-slate-100">
+              <div className="flex gap-3 justify-end pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                 <button type="button" onClick={() => setModalOpen(false)} className="btn-secondary">Cancel</button>
                 <button type="submit" disabled={saving} className="btn-primary">
                   {saving ? <svg className="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
@@ -551,13 +572,16 @@ function DisposalTab({ toast }) {
                records.length === 0 ? <EmptyState icon={Trash2} label="No disposal records" /> :
                records.map((r) => (
                 <tr key={r._id}>
-                  <td className="font-medium text-slate-800">{r.asset?.assetId ?? r.asset ?? '—'}</td>
+                  <td className="font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>{r.asset?.assetId ?? r.asset ?? '—'}</td>
                   <td>{fmtDate(r.disposalDate)}</td>
                   <td><span className={r.method === 'Sold' ? 'badge-green' : r.method === 'Donated' ? 'badge-blue' : 'badge-red'}>{r.method}</span></td>
                   <td>{fmt(r.saleAmount)}</td>
-                  <td className="text-slate-500 max-w-[200px] truncate">{r.reason || '—'}</td>
+                  <td className="max-w-[200px] truncate" style={{ color: 'rgba(255,255,255,0.4)' }}>{r.reason || '—'}</td>
                   <td>
-                    <button onClick={() => setDeleteTarget(r)} className="w-8 h-8 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-all">
+                    <button onClick={() => setDeleteTarget(r)} className="w-8 h-8 rounded-lg flex items-center justify-center transition-all" style={{ color: 'rgba(255,255,255,0.3)' }}
+                      onMouseEnter={e => { e.currentTarget.style.background='rgba(239,68,68,0.1)'; e.currentTarget.style.color='#f87171'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color='rgba(255,255,255,0.3)'; }}
+                    >
                       <Trash2 size={14} />
                     </button>
                   </td>
@@ -571,10 +595,13 @@ function DisposalTab({ toast }) {
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setModalOpen(false)} />
-          <div className="relative bg-white rounded-2xl shadow-[0_30px_80px_rgb(0,0,0,0.18)] w-full max-w-md p-6 animate-fade-in-up">
+          <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-md p-6 animate-fade-in-up" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-bold text-slate-800">Record Asset Disposal</h3>
-              <button onClick={() => setModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100"><X size={17}/></button>
+              <h3 className="text-lg font-bold" style={{ color: 'rgba(255,255,255,0.9)' }}>Record Asset Disposal</h3>
+              <button onClick={() => setModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors" style={{ color: 'rgba(255,255,255,0.35)' }}
+                onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.06)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background=''; }}
+              ><X size={17}/></button>
             </div>
             <form onSubmit={handleSave} className="space-y-4">
               <div>
@@ -584,7 +611,7 @@ function DisposalTab({ toast }) {
                     <option value="">Select asset…</option>
                     {assets.map((a) => <option key={a._id} value={a._id}>{a.assetId} — {a.category}</option>)}
                   </select>
-                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -595,13 +622,13 @@ function DisposalTab({ toast }) {
                     <select value={form.method} onChange={(e) => setForm((f) => ({...f, method: e.target.value}))} className="input appearance-none pr-8">
                       {['Sold', 'Donated', 'Scrapped', 'Returned'].map((m) => <option key={m}>{m}</option>)}
                     </select>
-                    <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                    <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />
                   </div>
                 </div>
               </div>
               <div><label className="label">Sale Amount ($)</label><input type="number" value={form.saleAmount} onChange={(e) => setForm((f) => ({...f, saleAmount: e.target.value}))} className="input" placeholder="0.00" /></div>
               <div><label className="label">Reason</label><textarea rows={2} value={form.reason} onChange={(e) => setForm((f) => ({...f, reason: e.target.value}))} className="input resize-none" placeholder="Why is this asset being disposed?" /></div>
-              <div className="flex gap-3 justify-end pt-2 border-t border-slate-100">
+              <div className="flex gap-3 justify-end pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                 <button type="button" onClick={() => setModalOpen(false)} className="btn-secondary">Cancel</button>
                 <button type="submit" disabled={saving} className="btn-primary">
                   {saving ? <svg className="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
@@ -634,7 +661,7 @@ export default function Assets() {
   return (
     <div className="page-container space-y-6">
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-white border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl px-5 py-3.5 text-sm font-medium text-slate-800 flex items-center gap-3 animate-fade-in-up">
+        <div className="fixed bottom-6 right-6 z-50 rounded-2xl px-5 py-3.5 text-sm font-medium flex items-center gap-3 animate-fade-in-up" style={{ background: '#0d1526', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.85)', boxShadow: '0 8px 30px rgba(0,0,0,0.4)' }}>
           <span className="w-2 h-2 rounded-full bg-emerald-500" />
           {toast}
         </div>
@@ -649,23 +676,21 @@ export default function Assets() {
       </div>
 
       {/* Vercel-style Animated Tabs */}
-      <div className="relative flex items-center gap-1 bg-slate-100/80 p-1 rounded-xl w-fit overflow-x-auto max-w-full">
+      <div className="relative flex items-center gap-1 p-1 rounded-xl w-fit overflow-x-auto max-w-full" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
         {TABS.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
-            className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 whitespace-nowrap select-none
-              ${activeTab === id
-                ? 'bg-white text-indigo-700 shadow-sm'
-                : 'text-slate-500 hover:text-slate-700 hover:bg-white/60'
-              }
-            `}
+            className="relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 whitespace-nowrap select-none"
+            style={activeTab === id
+              ? { background: 'linear-gradient(135deg,rgba(6,182,212,0.18),rgba(59,130,246,0.12))', color: '#22d3ee', border: '1px solid rgba(6,182,212,0.25)', boxShadow: '0 0 12px rgba(6,182,212,0.1)' }
+              : { color: 'rgba(255,255,255,0.4)' }
+            }
+            onMouseEnter={e => { if (activeTab !== id) { e.currentTarget.style.color='rgba(255,255,255,0.7)'; e.currentTarget.style.background='rgba(255,255,255,0.05)'; } }}
+            onMouseLeave={e => { if (activeTab !== id) { e.currentTarget.style.color='rgba(255,255,255,0.4)'; e.currentTarget.style.background=''; } }}
           >
-            <Icon size={15} className={`flex-shrink-0 ${activeTab === id ? 'text-indigo-600' : 'text-slate-400'}`} />
+            <Icon size={15} className="flex-shrink-0" style={{ color: activeTab === id ? '#22d3ee' : undefined }} />
             {label}
-            {activeTab === id && (
-              <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-3 h-0.5 rounded-full bg-indigo-500" />
-            )}
           </button>
         ))}
       </div>

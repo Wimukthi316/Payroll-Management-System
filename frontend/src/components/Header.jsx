@@ -14,6 +14,7 @@ const MOCK_NOTIFICATIONS = [
   { id: 1, text: 'Payroll for March generated',    time: '2 min ago',  dot: 'bg-cyan-400' },
   { id: 2, text: 'New employee Alex added',        time: '1 hr ago',   dot: 'bg-emerald-400' },
   { id: 3, text: 'Asset maintenance due: Laptop',  time: '3 hrs ago',  dot: 'bg-amber-400' },
+];
 
 export default function Header({ onMenuToggle, mobileOpen }) {
   const { user }        = useAuth();

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight, Zap, Building2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 
 function SignUpField({ name, label, type = 'text', icon: Icon, placeholder, half, form, onChange, errors }) {
@@ -8,18 +9,15 @@ function SignUpField({ name, label, type = 'text', icon: Icon, placeholder, half
     <div className={half ? '' : 'md:col-span-2'}>
       <label htmlFor={name} className="label">{label}</label>
       <div className="relative">
-        {Icon && <Icon size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />}
+        {Icon && <Icon size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />}
         <input
-          id={name}
-          name={name}
-          type={type}
-          value={form[name]}
-          onChange={onChange}
+          id={name} name={name} type={type}
+          value={form[name]} onChange={onChange}
           placeholder={placeholder}
-          className={`input pl-10 ${errors?.[name] ? 'border-red-300 focus:ring-red-300 focus:border-red-400' : ''}`}
+          className={`input pl-10 ${errors?.[name] ? 'border-red-500/40 focus:ring-red-500/20' : ''}`}
         />
       </div>
-      {errors?.[name] && <p className="text-xs text-red-500 mt-1">{errors[name]}</p>}
+      {errors?.[name] && <p className="text-xs mt-1" style={{ color: '#f87171' }}>{errors[name]}</p>}
     </div>
   );
 }
@@ -64,64 +62,112 @@ export default function SignUp() {
     }
   }
 
-
   return (
-    <div className="min-h-screen flex">
-      {/* Left — Graphic */}
+    <div className="min-h-screen flex" style={{ background: '#050810' }}>
+      {/* ── Left — Graphic ───────────────────────────────────────────── */}
       <div className="hidden lg:flex flex-col flex-1 relative overflow-hidden">
         <img
           src="https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1000&h=1200&auto=format&fit=crop"
           alt="Background"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-violet-700/85 via-indigo-600/75 to-indigo-900/85" />
-        <div className="relative z-10 flex flex-col justify-center flex-1 p-12 text-white">
+        {/* Dark overlay */}
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg,rgba(5,8,16,0.92) 0%,rgba(6,182,212,0.10) 55%,rgba(5,8,16,0.95) 100%)' }} />
+
+        {/* Animated orbs */}
+        <motion.div
+          className="absolute rounded-full pointer-events-none"
+          style={{ width: 420, height: 420, background: 'rgba(6,182,212,0.1)', filter: 'blur(90px)', top: '5%', left: '-10%' }}
+          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.9, 0.5] }}
+          transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute rounded-full pointer-events-none"
+          style={{ width: 320, height: 320, background: 'rgba(139,92,246,0.08)', filter: 'blur(80px)', bottom: '10%', right: '-5%' }}
+          animate={{ scale: [1, 1.18, 1], opacity: [0.4, 0.8, 0.4] }}
+          transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut', delay: 2.5 }}
+        />
+
+        <motion.div
+          className="relative z-10 flex flex-col justify-center flex-1 p-12 text-white"
+          initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, ease: [0.22,1,0.36,1], delay: 0.15 }}
+        >
           <Link to="/" className="flex items-center gap-2.5 mb-16">
-            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center border border-white/30">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(8px)' }}>
               <Zap size={20} className="text-white" />
             </div>
-            <span className="font-extrabold text-2xl tracking-tight">Payroll<span className="text-yellow-300">Pro</span></span>
+            <span className="font-extrabold text-2xl tracking-tight" style={{ color: 'rgba(255,255,255,0.9)' }}>
+              Payroll<span style={{ backgroundImage: 'linear-gradient(135deg,#06b6d4,#3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Pro</span>
+            </span>
           </Link>
-          <h2 className="text-3xl font-black leading-tight mb-4 max-w-xs">
+          <h2 className="text-3xl font-black leading-tight mb-4 max-w-xs" style={{ color: 'rgba(255,255,255,0.92)' }}>
             Join thousands of forward-thinking teams.
           </h2>
-          <p className="text-sm text-white/70 max-w-xs leading-relaxed mb-10">
+          <p className="text-sm max-w-xs leading-relaxed mb-10" style={{ color: 'rgba(255,255,255,0.4)' }}>
             Set up your workspace in under 2 minutes. No credit card, no contracts — just powerful tools.
           </p>
           <div className="space-y-4">
             {[
-              { n: '5×', t: 'Faster payroll cycles' },
-              { n: '100%', t: 'Real-time visibility' },
-              { n: 'SOC2', t: 'Security certified' },
-            ].map(({ n, t }) => (
-              <div key={t} className="flex items-center gap-3">
-                <span className="w-10 h-10 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center text-sm font-black text-yellow-300">{n}</span>
-                <span className="text-sm font-medium text-white/80">{t}</span>
-              </div>
+              { n: '5×', t: 'Faster payroll cycles', color: '#22d3ee' },
+              { n: '100%', t: 'Real-time visibility', color: '#34d399' },
+              { n: 'SOC2', t: 'Security certified', color: '#a78bfa' },
+            ].map(({ n, t, color }, i) => (
+              <motion.div
+                key={t}
+                initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 + i * 0.1, duration: 0.4 }}
+                className="flex items-center gap-3"
+              >
+                <span className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-black"
+                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color }}
+                >{n}</span>
+                <span className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.65)' }}>{t}</span>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
 
-      {/* Right — Form */}
-      <div className="flex-1 flex flex-col justify-center items-center px-6 py-12 bg-white overflow-y-auto animate-fade-in">
-        <div className="w-full max-w-md">
+      {/* ── Right — Form ──────────────────────────────────────────────── */}
+      <div className="flex-1 flex flex-col justify-center items-center px-6 py-12 relative overflow-hidden overflow-y-auto">
+        {/* Animated background orbs */}
+        <motion.div
+          className="absolute rounded-full pointer-events-none"
+          style={{ width: 480, height: 480, background: 'rgba(6,182,212,0.07)', filter: 'blur(95px)', top: '-10%', right: '-15%' }}
+          animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.9, 0.5] }}
+          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute rounded-full pointer-events-none"
+          style={{ width: 350, height: 350, background: 'rgba(99,102,241,0.06)', filter: 'blur(80px)', bottom: '-5%', left: '-10%' }}
+          animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.8, 0.4] }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
+        />
+
+        <motion.div
+          className="w-full max-w-md relative z-10"
+          initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.22,1,0.36,1], delay: 0.1 }}
+        >
           {/* Mobile logo */}
           <Link to="/" className="flex items-center gap-2.5 mb-8 lg:hidden">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#06b6d4,#3b82f6)', boxShadow: '0 0 16px rgba(6,182,212,0.3)' }}>
               <Zap size={15} className="text-white" />
             </div>
-            <span className="font-extrabold text-slate-800 text-lg">Payroll<span className="text-indigo-600">Pro</span></span>
+            <span className="font-extrabold text-lg" style={{ color: 'rgba(255,255,255,0.9)' }}>
+              Payroll<span style={{ backgroundImage: 'linear-gradient(135deg,#06b6d4,#3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Pro</span>
+            </span>
           </Link>
 
-          <h2 className="text-2xl font-black text-slate-800 mb-1">Create your account</h2>
-          <p className="text-sm text-slate-400 mb-8">Free for 30 days. No credit card required.</p>
+          <h2 className="text-2xl font-black mb-1" style={{ color: 'rgba(255,255,255,0.92)' }}>Create your account</h2>
+          <p className="text-sm mb-8" style={{ color: 'rgba(255,255,255,0.35)' }}>Free for 30 days. No credit card required.</p>
 
           <form onSubmit={handleSubmit} noValidate>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <SignUpField name="firstName" label="First Name"    icon={User}      placeholder="Alex"          half form={form} onChange={handleChange} errors={errors} />
-              <SignUpField name="lastName"  label="Last Name"     icon={User}      placeholder="Johnson"       half form={form} onChange={handleChange} errors={errors} />
-              <SignUpField name="company"   label="Company (opt)" icon={Building2} placeholder="Acme Corp"     half form={form} onChange={handleChange} errors={errors} />
+              <SignUpField name="firstName" label="First Name"    icon={User}      placeholder="Alex"            half form={form} onChange={handleChange} errors={errors} />
+              <SignUpField name="lastName"  label="Last Name"     icon={User}      placeholder="Johnson"         half form={form} onChange={handleChange} errors={errors} />
+              <SignUpField name="company"   label="Company (opt)" icon={Building2} placeholder="Acme Corp"       half form={form} onChange={handleChange} errors={errors} />
               <SignUpField name="email"     label="Work Email"    icon={Mail}      placeholder="you@company.com" half type="email" form={form} onChange={handleChange} errors={errors} />
             </div>
 
@@ -129,43 +175,41 @@ export default function SignUp() {
             <div className="mb-4">
               <label htmlFor="password" className="label">Password</label>
               <div className="relative">
-                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />
                 <input
-                  id="password"
-                  name="password"
+                  id="password" name="password"
                   type={showPw ? 'text' : 'password'}
-                  value={form.password}
-                  onChange={handleChange}
+                  value={form.password} onChange={handleChange}
                   placeholder="Min 8 characters"
-                  className={`input pl-10 pr-11 ${errors.password ? 'border-red-300' : ''}`}
+                  className={`input pl-10 pr-11 ${errors.password ? 'border-red-500/40' : ''}`}
                 />
                 <button
-                  type="button"
-                  onClick={() => setShowPw(!showPw)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  type="button" onClick={() => setShowPw(!showPw)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 transition-colors"
+                  style={{ color: 'rgba(255,255,255,0.25)' }}
+                  onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.6)'}
+                  onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.25)'}
                 >
                   {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
-              {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
+              {errors.password && <p className="text-xs mt-1" style={{ color: '#f87171' }}>{errors.password}</p>}
             </div>
 
             {/* Confirm Password */}
             <div className="mb-6">
               <label htmlFor="confirmPassword" className="label">Confirm Password</label>
               <div className="relative">
-                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />
                 <input
-                  id="confirmPassword"
-                  name="confirmPassword"
+                  id="confirmPassword" name="confirmPassword"
                   type="password"
-                  value={form.confirmPassword}
-                  onChange={handleChange}
+                  value={form.confirmPassword} onChange={handleChange}
                   placeholder="Repeat password"
-                  className={`input pl-10 ${errors.confirmPassword ? 'border-red-300' : ''}`}
+                  className={`input pl-10 ${errors.confirmPassword ? 'border-red-500/40' : ''}`}
                 />
               </div>
-              {errors.confirmPassword && <p className="text-xs text-red-500 mt-1">{errors.confirmPassword}</p>}
+              {errors.confirmPassword && <p className="text-xs mt-1" style={{ color: '#f87171' }}>{errors.confirmPassword}</p>}
             </div>
 
             <button type="submit" disabled={loading} className="btn-primary w-full justify-center py-3 text-base">
@@ -180,21 +224,32 @@ export default function SignUp() {
             </button>
           </form>
 
-          <p className="text-xs text-slate-400 text-center mt-4 leading-relaxed">
+          <p className="text-xs text-center mt-4 leading-relaxed" style={{ color: 'rgba(255,255,255,0.3)' }}>
             By creating an account you agree to our{' '}
-            <a href="#" className="text-indigo-600 hover:underline">Terms of Service</a>
+            <a href="#" className="transition-colors" style={{ color: '#22d3ee' }}
+              onMouseEnter={e => e.currentTarget.style.color='#67e8f9'}
+              onMouseLeave={e => e.currentTarget.style.color='#22d3ee'}
+            >Terms of Service</a>
             {' '}and{' '}
-            <a href="#" className="text-indigo-600 hover:underline">Privacy Policy</a>.
+            <a href="#" className="transition-colors" style={{ color: '#22d3ee' }}
+              onMouseEnter={e => e.currentTarget.style.color='#67e8f9'}
+              onMouseLeave={e => e.currentTarget.style.color='#22d3ee'}
+            >Privacy Policy</a>.
           </p>
 
-          <p className="text-center text-sm text-slate-500 mt-6">
+          <p className="text-center text-sm mt-6" style={{ color: 'rgba(255,255,255,0.35)' }}>
             Already have an account?{' '}
-            <Link to="/signin" className="font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">
+            <Link to="/signin" className="font-semibold transition-colors" style={{ color: '#22d3ee' }}
+              onMouseEnter={e => e.currentTarget.style.color='#67e8f9'}
+              onMouseLeave={e => e.currentTarget.style.color='#22d3ee'}
+            >
               Sign in
             </Link>
           </p>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
 }
+
+
