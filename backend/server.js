@@ -11,17 +11,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ─── API Routes ───────────────────────────────────────────────────────────────
-const employeeRoutes = require('./routes/employeeRoutes');
-const assetRoutes    = require('./routes/assetRoutes');
-
-app.use('/api/employees', employeeRoutes);
-app.use('/api/assets',    assetRoutes);
-
-// Uncomment as additional routes are built:
-// app.use('/api/payroll',    require('./routes/payrollRoutes'));
-// app.use('/api/maintenance',require('./routes/assetMaintenanceRoutes'));
-// app.use('/api/transfers',  require('./routes/assetTransferRoutes'));
-// app.use('/api/disposals',  require('./routes/assetDisposalRoutes'));
+app.use('/api/employees',        require('./routes/employeeRoutes'));
+app.use('/api/assets',           require('./routes/assetRoutes'));
+app.use('/api/payroll',          require('./routes/payrollRoutes'));
+app.use('/api/asset-maintenance',require('./routes/assetMaintenanceRoutes'));
+app.use('/api/asset-transfers',  require('./routes/assetTransferRoutes'));
+app.use('/api/asset-disposals',  require('./routes/assetDisposalRoutes'));
 
 // ─── Health Check ─────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {
