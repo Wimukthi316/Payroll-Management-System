@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Package, Wrench, ArrowLeftRight, Trash2,
   Plus, Search, X, Save, AlertTriangle, ChevronDown,
@@ -155,7 +156,7 @@ function AssetModal({ open, onClose, onSave, initial, saving }) {
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6" onClick={onClose}>
       <div className="relative w-full max-w-full sm:max-w-lg md:max-w-3xl bg-slate-900 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] sm:max-h-[85vh]" onClick={e => e.stopPropagation()}>
         
@@ -228,17 +229,17 @@ function AssetModal({ open, onClose, onSave, initial, saving }) {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
 /* ─── Delete confirm ────────────────────────────────────────────────────────── */
 function DeleteModal({ item, label, onClose, onConfirm, loading }) {
   if (!item) return null;
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-sm p-6 animate-fade-in-up text-center" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6" onClick={onClose}>
+      <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-sm p-6 animate-fade-in-up text-center" onClick={(e) => e.stopPropagation()} style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
         <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(239,68,68,0.1)' }}>
           <AlertTriangle size={24} className="text-red-400" />
         </div>
@@ -251,7 +252,8 @@ function DeleteModal({ item, label, onClose, onConfirm, loading }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -430,7 +432,7 @@ const [form, setForm]       = useState({ asset: '', maintenanceType: '', mainten
         </div>
       </div>
 
-      {modalOpen && (
+      {modalOpen && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6" onClick={() => setModalOpen(false)}>
           <div className="relative w-full max-w-full sm:max-w-lg md:max-w-3xl bg-slate-900 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] sm:max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
             <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-slate-700/60">
@@ -482,7 +484,8 @@ const [form, setForm]       = useState({ asset: '', maintenanceType: '', mainten
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
       <DeleteModal item={deleteTarget} label="Maintenance Record" onClose={() => setDeleteTarget(null)} onConfirm={handleDelete} loading={deleting} />
     </>
@@ -562,7 +565,7 @@ function TransfersTab({ toast }) {
         </div>
       </div>
 
-      {modalOpen && (
+      {modalOpen && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6" onClick={() => setModalOpen(false)}>
           <div className="relative w-full max-w-full sm:max-w-lg md:max-w-3xl bg-slate-900 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] sm:max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
             <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-slate-700/60">
@@ -600,7 +603,8 @@ function TransfersTab({ toast }) {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
       <DeleteModal item={deleteTarget} label="Transfer Record" onClose={() => setDeleteTarget(null)} onConfirm={handleDelete} loading={deleting} />
     </>
@@ -680,7 +684,7 @@ function DisposalTab({ toast }) {
         </div>
       </div>
 
-      {modalOpen && (
+      {modalOpen && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6" onClick={() => setModalOpen(false)}>
           <div className="relative w-full max-w-full sm:max-w-lg md:max-w-3xl bg-slate-900 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] sm:max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
             <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-slate-700/60">
@@ -725,7 +729,8 @@ function DisposalTab({ toast }) {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
       <DeleteModal item={deleteTarget} label="Disposal Record" onClose={() => setDeleteTarget(null)} onConfirm={handleDelete} loading={deleting} />
     </>
