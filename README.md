@@ -9,7 +9,7 @@
 <br/>
 
 <!-- Replace with your actual screenshot -->
-![Hero Screenshot](https://placehold.co/1200x600/050810/22d3ee?text=PayrollPro+Dashboard&font=montserrat)
+![Hero Screenshot](./frontend/dashboard.jpeg)
 
 <br/>
 
