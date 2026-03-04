@@ -4,6 +4,7 @@ import {
   ArrowUpRight, ArrowDownRight, Activity, Clock,
   Calendar, ChevronRight,
 } from 'lucide-react';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { employeeAPI, payrollAPI, assetAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -88,6 +89,7 @@ export default function Dashboard() {
   const { user }    = useAuth();
   const [loading, setLoading] = useState(true);
   const [stats, setStats]   = useState({ employees: 0, payroll: 0, assets: 0, expenses: 0 });
+  const [monthlyPayroll, setMonthlyPayroll] = useState(MONTHS.map((month) => ({ month, netPay: 0 })));
   const today = new Date();
 
   useEffect(() => {
@@ -104,9 +106,28 @@ export default function Dashboard() {
         const totalPay  = Array.isArray(payrolls)
           ? payrolls.reduce((s, p) => s + (p.netPay ?? p.basicSalary ?? 0), 0)
           : 0;
+
+        const monthIndexMap = {
+          january: 0, february: 1, march: 2, april: 3, may: 4, june: 5,
+          july: 6, august: 7, september: 8, october: 9, november: 10, december: 11,
+        };
+        const grouped = MONTHS.map((month) => ({ month, netPay: 0 }));
+
+        if (Array.isArray(payrolls)) {
+          payrolls.forEach((record) => {
+            const rawMonth = String(record.month ?? '').trim().toLowerCase();
+            const index = monthIndexMap[rawMonth];
+            if (index != null) {
+              grouped[index].netPay += Number(record.netPay ?? 0);
+            }
+          });
+        }
+
         setStats({ employees, payroll: totalPay, assets, expenses: totalPay * 0.12 });
+        setMonthlyPayroll(grouped);
       } catch {
         /* backend may be offline — use zeros */
+        setMonthlyPayroll(MONTHS.map((month) => ({ month, netPay: 0 })));
       } finally {
         setLoading(false);
       }
@@ -226,39 +247,33 @@ export default function Dashboard() {
           </div>
 
           {/* Chart area */}
-          <div className="relative h-56 rounded-xl flex items-end px-4 pb-4 gap-2 overflow-hidden"
+          <div className="relative h-56 rounded-xl px-2 py-2 overflow-hidden"
             style={{ background: 'rgba(6,182,212,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
           >
-            {/* Y-axis guide lines */}
-            {[75, 50, 25].map((p) => (
-              <div
-                key={p}
-                className="absolute left-4 right-4 border-t border-dashed"
-                style={{ bottom: `${p}%`, borderColor: 'rgba(255,255,255,0.06)' }}
-              />
-            ))}
-            {/* Bars */}
-            {[42, 58, 50, 68, 62, 78, 70, 85, 80, 90, 88, 95].map((h, i) => (
-              <div key={i} className="relative flex-1 group">
-                <div
-                  className="w-full rounded-t-lg transition-all duration-500 cursor-pointer"
-                  style={{ height: `${h}%`, background: 'linear-gradient(to top, #06b6d4, #818cf8)' }}
-                  onMouseEnter={e => e.currentTarget.style.background='linear-gradient(to top, #0ea5e9, #a78bfa)'}
-                  onMouseLeave={e => e.currentTarget.style.background='linear-gradient(to top, #06b6d4, #818cf8)'}
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={monthlyPayroll} margin={{ top: 10, right: 10, left: 0, bottom: 8 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" vertical={false} />
+                <XAxis
+                  dataKey="month"
+                  tick={{ fill: 'rgba(255,255,255,0.45)', fontSize: 11 }}
+                  axisLine={{ stroke: 'rgba(255,255,255,0.15)' }}
+                  tickLine={{ stroke: 'rgba(255,255,255,0.15)' }}
                 />
-                <div className="absolute -top-7 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity rounded px-1.5 py-0.5 whitespace-nowrap pointer-events-none z-10 text-xs text-white"
-                  style={{ background: 'rgba(13,21,38,0.95)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                  {h}k
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Month labels */}
-          <div className="flex gap-2 px-4 mt-2">
-            {MONTHS.map((m) => (
-              <span key={m} className="flex-1 text-center text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.25)' }}>{m}</span>
-            ))}
+                <YAxis
+                  tick={{ fill: 'rgba(255,255,255,0.45)', fontSize: 11 }}
+                  axisLine={{ stroke: 'rgba(255,255,255,0.15)' }}
+                  tickLine={{ stroke: 'rgba(255,255,255,0.15)' }}
+                  tickFormatter={(value) => `$${Math.round(value / 1000)}k`}
+                />
+                <Tooltip
+                  formatter={(value) => [`$${Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 })}`, 'Net Pay']}
+                  contentStyle={{ background: 'rgba(10,16,32,0.95)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, color: 'rgba(255,255,255,0.85)' }}
+                  labelStyle={{ color: 'rgba(255,255,255,0.6)' }}
+                  cursor={{ fill: 'rgba(6,182,212,0.08)' }}
+                />
+                <Bar dataKey="netPay" radius={[8, 8, 0, 0]} fill="#06b6d4" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
 

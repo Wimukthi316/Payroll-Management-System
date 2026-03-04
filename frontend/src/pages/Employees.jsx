@@ -39,7 +39,7 @@ const FIELD_BASE = {
   borderRadius: 10,
   outline: 'none',
   width: '100%',
-  padding: '9px 12px',
+  padding: '7px 10px',
   fontSize: 14,
   transition: 'border-color 0.15s, box-shadow 0.15s',
 };
@@ -50,8 +50,8 @@ function EField({ name, label, type = 'text', icon: Icon, required, options, hal
   const hasErr = !!errors?.[name];
   const style  = { ...FIELD_BASE, ...(hasErr ? FIELD_ERROR : {}) };
   return (
-    <div className={half ? '' : 'sm:col-span-2'}>
-      <label className="block text-xs font-semibold mb-1.5" style={{ color: hasErr ? '#f87171' : 'rgba(255,255,255,0.5)' }}>
+    <div className={half ? '' : 'col-span-1 md:col-span-2'}>
+      <label className="block text-xs font-semibold mb-1" style={{ color: hasErr ? '#f87171' : 'rgba(255,255,255,0.5)' }}>
         {label}{required && <span className="ml-0.5" style={{ color: '#f87171' }}>*</span>}
       </label>
       {options ? (
@@ -70,7 +70,9 @@ function EField({ name, label, type = 'text', icon: Icon, required, options, hal
         <div className="relative">
           {Icon && <Icon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />}
           <input
-            name={name} type={type} value={form[name] ?? ''} onChange={onChange}
+            name={name} type={type}
+            value={type === 'date' ? (form[name] ?? '').split('T')[0] : (form[name] ?? '')}
+            onChange={onChange}
             style={{ ...style, paddingLeft: Icon ? 34 : 12 }}
             onFocus={e => Object.assign(e.currentTarget.style, FIELD_FOCUS)}
             onBlur={e => Object.assign(e.currentTarget.style, hasErr ? FIELD_ERROR : { borderColor: 'rgba(255,255,255,0.1)', boxShadow: '' })}
@@ -85,7 +87,7 @@ function EField({ name, label, type = 'text', icon: Icon, required, options, hal
 
 function SectionDivider({ label }) {
   return (
-    <div className="sm:col-span-2 flex items-center gap-3 pt-1">
+    <div className="col-span-1 md:col-span-2 flex items-center gap-2">
       <p className="text-xs font-bold uppercase tracking-widest whitespace-nowrap" style={{ color: 'rgba(99,102,241,0.8)' }}>{label}</p>
       <div className="flex-1 h-px" style={{ background: 'rgba(99,102,241,0.15)' }} />
     </div>
@@ -125,19 +127,13 @@ function EmployeeModal({ open, onClose, onSave, initial, saving }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 backdrop-blur-sm" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={onClose} />
-      <div
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up"
-        style={{ background: 'linear-gradient(145deg,#0d1117,#0a0f1e)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 20, boxShadow: '0 40px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04)' }}
-      >
-        {/* ── Header ── */}
-        <div
-          className="flex items-center justify-between px-6 py-5 sticky top-0 z-10"
-          style={{ background: 'linear-gradient(145deg,#0d1117,#0a0f1e)', borderBottom: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px 20px 0 0' }}
-        >
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={onClose}>
+      <div className="relative mt-60 w-full max-w-3xl bg-slate-900 rounded-2xl shadow-2xl p-6 animate-fade-in-up flex flex-col max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
+
+        {/* ── Sticky Header ── */}
+        <div className="shrink-0 flex items-center justify-between px-6 py-5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
               style={{ background: 'linear-gradient(135deg,rgba(99,102,241,0.25),rgba(139,92,246,0.15))', border: '1px solid rgba(99,102,241,0.3)' }}>
               <UserCircle size={20} style={{ color: '#818cf8' }} />
             </div>
@@ -150,8 +146,7 @@ function EmployeeModal({ open, onClose, onSave, initial, saving }) {
               </p>
             </div>
           </div>
-          <button
-            type="button" onClick={onClose}
+          <button type="button" onClick={onClose}
             className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-150"
             style={{ color: 'rgba(255,255,255,0.3)' }}
             onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.07)'; e.currentTarget.style.color='rgba(255,255,255,0.8)'; }}
@@ -161,59 +156,45 @@ function EmployeeModal({ open, onClose, onSave, initial, saving }) {
           </button>
         </div>
 
-        {/* ── Form body ── */}
-        <form onSubmit={handleSubmit} noValidate>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4 p-6">
-
+        {/* ── Scrollable Form Area ── */}
+        <div className="p-6 overflow-y-auto flex-1">
+          <form id="employee-form" onSubmit={handleSubmit} noValidate>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <SectionDivider label="Identity" />
-            <EField name="employeeId" label="Employee ID"  icon={Briefcase} required half form={form} errors={errors} onChange={handleChange} />
-            <EField name="role"       label="Role"          options={['Admin', 'HR', 'Accountant']} required half form={form} errors={errors} onChange={handleChange} />
-            <EField name="firstName"  label="First Name"   required half form={form} errors={errors} onChange={handleChange} />
-            <EField name="lastName"   label="Last Name"    required half form={form} errors={errors} onChange={handleChange} />
+            <EField name="employeeId" label="Employee ID" icon={Briefcase} required form={form} errors={errors} onChange={handleChange} />
+            <EField name="role" label="Role" options={['Admin', 'HR', 'Accountant']} required form={form} errors={errors} onChange={handleChange} />
+            <EField name="firstName" label="First Name" required form={form} errors={errors} onChange={handleChange} />
+            <EField name="lastName" label="Last Name" required form={form} errors={errors} onChange={handleChange} />
 
             <SectionDivider label="Contact" />
-            <EField name="email"  label="Email Address"  icon={Mail}  type="email" required half form={form} errors={errors} onChange={handleChange} />
-            <EField name="phone"  label="Phone Number"   icon={Phone}            half form={form} errors={errors} onChange={handleChange} />
+            <EField name="email" label="Email Address" icon={Mail} type="email" required form={form} errors={errors} onChange={handleChange} />
+            <EField name="phone" label="Phone Number" icon={Phone} form={form} errors={errors} onChange={handleChange} />
 
             <SectionDivider label="Employment" />
-            <EField name="department"  label="Department"     icon={Building2} half form={form} errors={errors} onChange={handleChange} />
-            <EField name="basicSalary" label="Basic Salary ($)" icon={DollarSign} type="number" required half form={form} errors={errors} onChange={handleChange} />
-            <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Date Joined</label>
-              <div className="relative">
-                <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />
-                <input
-                  name="dateJoined" type="date"
-                  value={form.dateJoined ? form.dateJoined.split('T')[0] : ''}
-                  onChange={handleChange}
-                  style={{ ...FIELD_BASE, paddingLeft: 34 }}
-                  onFocus={e => Object.assign(e.currentTarget.style, FIELD_FOCUS)}
-                  onBlur={e => Object.assign(e.currentTarget.style, { borderColor: 'rgba(255,255,255,0.1)', boxShadow: '' })}
-                />
-              </div>
+            <EField name="department" label="Department" icon={Building2} form={form} errors={errors} onChange={handleChange} />
+            <EField name="basicSalary" label="Basic Salary ($)" icon={DollarSign} type="number" required form={form} errors={errors} onChange={handleChange} />
+            <EField name="dateJoined" label="Date Joined" icon={Calendar} type="date" half={false} form={form} errors={errors} onChange={handleChange} />
             </div>
-          </div>
+          </form>
+        </div>
 
-          {/* ── Footer ── */}
-          <div
-            className="flex items-center justify-end gap-3 px-6 py-4"
-            style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+        {/* ── Sticky Footer ── */}
+        <div className="shrink-0 flex items-center justify-end gap-3 pt-5">
+          <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
+          <button
+            type="submit" form="employee-form" disabled={saving}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all duration-200 disabled:opacity-60"
+            style={{ background: 'linear-gradient(135deg,#6366f1,#818cf8)', boxShadow: '0 0 20px rgba(99,102,241,0.35)' }}
+            onMouseEnter={e => { if (!saving) e.currentTarget.style.boxShadow='0 0 28px rgba(99,102,241,0.55)'; }}
+            onMouseLeave={e => { e.currentTarget.style.boxShadow='0 0 20px rgba(99,102,241,0.35)'; }}
           >
-            <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
-            <button
-              type="submit" disabled={saving}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all duration-200 disabled:opacity-60"
-              style={{ background: 'linear-gradient(135deg,#6366f1,#818cf8)', boxShadow: '0 0 20px rgba(99,102,241,0.35)' }}
-              onMouseEnter={e => { if (!saving) e.currentTarget.style.boxShadow='0 0 28px rgba(99,102,241,0.55)'; }}
-              onMouseLeave={e => { e.currentTarget.style.boxShadow='0 0 20px rgba(99,102,241,0.35)'; }}
-            >
-              {saving
-                ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                : <><Save size={14} /> {isEdit ? 'Save Changes' : 'Add Employee'}</>
-              }
-            </button>
-          </div>
-        </form>
+            {saving
+              ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+              : <><Save size={14} /> {isEdit ? 'Save Changes' : 'Add Employee'}</>
+            }
+          </button>
+        </div>
+
       </div>
     </div>
   );

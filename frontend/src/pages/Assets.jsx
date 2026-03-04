@@ -71,7 +71,7 @@ function AField({ name, label, type = 'text', icon: Icon, required, options, spa
   const hasErr = !!errors?.[name];
   const base   = { ...A_FIELD_BASE, ...(hasErr ? A_ERR : {}) };
   return (
-    <div className={span2 ? 'sm:col-span-2' : ''}>
+    <div className={span2 ? 'col-span-2' : ''}>
       <label className="block text-xs font-semibold mb-1.5" style={{ color: hasErr ? '#f87171' : 'rgba(255,255,255,0.5)' }}>
         {label}{required && <span className="ml-0.5" style={{ color: '#f87171' }}>*</span>}
       </label>
@@ -114,7 +114,7 @@ function AField({ name, label, type = 'text', icon: Icon, required, options, spa
 
 function AssetSectionDivider({ label }) {
   return (
-    <div className="sm:col-span-2 flex items-center gap-3 pt-1">
+    <div className="col-span-2 flex items-center gap-2">
       <p className="text-xs font-bold uppercase tracking-widest whitespace-nowrap" style={{ color: 'rgba(6,182,212,0.7)' }}>{label}</p>
       <div className="flex-1 h-px" style={{ background: 'rgba(6,182,212,0.15)' }} />
     </div>
@@ -156,17 +156,13 @@ function AssetModal({ open, onClose, onSave, initial, saving }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 backdrop-blur-sm" style={{ background: 'rgba(0,0,0,0.65)' }} onClick={onClose} />
-      <div
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-fade-in-up"
-        style={{ background: 'linear-gradient(145deg,#0a0e1a,#060c18)', border: '1px solid rgba(6,182,212,0.18)', borderRadius: 20, boxShadow: '0 40px 100px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.035)' }}
-      >
-        {/* Header */}
-        <div
-          className="flex items-center justify-between px-6 py-5 sticky top-0 z-10"
-          style={{ background: 'linear-gradient(145deg,#0a0e1a,#060c18)', borderBottom: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px 20px 0 0' }}
-        >
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={onClose}>
+      
+      {/* 1. Modal Container: mt-60, flex-col saha max-h add karala thiyenne */}
+      <div className="relative mt-60 w-full max-w-3xl bg-slate-900 rounded-2xl shadow-2xl p-6 animate-fade-in-up flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
+        
+        {/* 2. Header: shrink-0 damma eka hirawenne nathi wenna */}
+        <div className="shrink-0 flex items-center justify-between pb-3 mb-3 border-b border-slate-700/60">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
               style={{ background: 'linear-gradient(135deg,rgba(6,182,212,0.2),rgba(59,130,246,0.1))', border: '1px solid rgba(6,182,212,0.25)' }}>
@@ -192,10 +188,11 @@ function AssetModal({ open, onClose, onSave, initial, saving }) {
           </button>
         </div>
 
-        {/* Form body */}
-        <form onSubmit={handleSubmit} noValidate>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4 p-6">
-
+        {/* 3. Form Wrapper: flex-1 daala form eka stretch karala thiyenne */}
+        <form onSubmit={handleSubmit} noValidate className="flex flex-col flex-1 overflow-hidden">
+          
+          {/* 4. Scrollable Fields Area: overflow-y-auto damma scroll wenna */}
+          <div className="grid grid-cols-2 gap-4 overflow-y-auto pr-2 pb-2">
             <AssetSectionDivider label="Identification" />
             <AField name="assetId"      label="Asset ID"        required icon={Package}   form={form} errors={errors} onChange={handleChange} />
             <AField name="category"     label="Category"        required
@@ -216,14 +213,10 @@ function AssetModal({ open, onClose, onSave, initial, saving }) {
             <AField name="assignedLocation"  label="Assigned Location"  icon={MapPin} form={form} errors={errors} onChange={handleChange} />
             <AField name="responsiblePerson" label="Responsible Person" icon={User}   form={form} errors={errors} onChange={handleChange} />
             <AField name="description" label="Description" type="textarea" span2 form={form} errors={errors} onChange={handleChange} />
-
           </div>
 
-          {/* Footer */}
-          <div
-            className="flex items-center justify-end gap-3 px-6 py-4"
-            style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
-          >
+          {/* 5. Footer: shrink-0 daala pallaha fixed thiyagena thiyenne */}
+          <div className="shrink-0 flex items-center justify-end gap-3 mt-4 pt-3 border-t border-slate-700/60">
             <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
             <button
               type="submit" disabled={saving}
@@ -375,7 +368,7 @@ function MaintenanceTab({ toast }) {
   const [loading, setLoading] = useState(true);
   const [assets, setAssets]   = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [form, setForm]       = useState({ asset: '', scheduledDate: '', description: '', cost: '', status: 'Scheduled' });
+const [form, setForm]       = useState({ asset: '', maintenanceType: '', maintenanceDate: '', serviceProvider: '', cost: '', notes: '' });
   const [saving, setSaving]   = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
@@ -415,7 +408,7 @@ function MaintenanceTab({ toast }) {
         <div className="table-wrapper">
           <table className="data-table">
             <thead>
-              <tr>{['Asset', 'Scheduled Date', 'Description', 'Cost', 'Status', 'Actions'].map((h) => <th key={h}>{h}</th>)}</tr>
+              <tr>{['Asset', 'Type', 'Date', 'Notes', 'Cost', 'Actions'].map((h) => <th key={h}>{h}</th>)}</tr>
             </thead>
             <tbody>
               {loading ? Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} cols={6} />) :
@@ -423,10 +416,10 @@ function MaintenanceTab({ toast }) {
                records.map((r) => (
                 <tr key={r._id}>
                   <td className="font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>{r.asset?.assetId ?? r.asset ?? '—'}</td>
-                  <td>{fmtDate(r.scheduledDate)}</td>
-                  <td className="max-w-[220px] truncate" style={{ color: 'rgba(255,255,255,0.4)' }}>{r.description || '—'}</td>
+                  <td style={{ color: 'rgba(255,255,255,0.75)' }}>{r.maintenanceType || '—'}</td>
+                  <td>{fmtDate(r.maintenanceDate)}</td>
+                  <td className="max-w-[220px] truncate" style={{ color: 'rgba(255,255,255,0.4)' }}>{r.notes || '—'}</td>
                   <td>{fmt(r.cost)}</td>
-                  <td><span className={r.status === 'Completed' ? 'badge-green' : r.status === 'In Progress' ? 'badge-amber' : 'badge-blue'}>{r.status}</span></td>
                   <td>
                     <button onClick={() => setDeleteTarget(r)} className="w-8 h-8 rounded-lg flex items-center justify-center transition-all" style={{ color: 'rgba(255,255,255,0.3)' }}
                       onMouseEnter={e => { e.currentTarget.style.background='rgba(239,68,68,0.1)'; e.currentTarget.style.color='#f87171'; }}
@@ -443,17 +436,16 @@ function MaintenanceTab({ toast }) {
       </div>
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setModalOpen(false)} />
-          <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-md p-6 animate-fade-in-up" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
-            <div className="flex items-center justify-between mb-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setModalOpen(false)}>
+          <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-md max-h-[90vh] overflow-y-auto animate-fade-in-up" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }} onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-6 pb-0">
               <h3 className="text-lg font-bold" style={{ color: 'rgba(255,255,255,0.9)' }}>Schedule Maintenance</h3>
               <button onClick={() => setModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors" style={{ color: 'rgba(255,255,255,0.35)' }}
                 onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.06)'; }}
                 onMouseLeave={e => { e.currentTarget.style.background=''; }}
               ><X size={17}/></button>
             </div>
-            <form onSubmit={handleSave} className="space-y-4">
+            <form onSubmit={handleSave} className="p-6 space-y-4">
               <div>
                 <label className="label">Asset</label>
                 <div className="relative">
@@ -465,33 +457,32 @@ function MaintenanceTab({ toast }) {
                 </div>
               </div>
               <div>
-                <label className="label">Scheduled Date</label>
-                <input type="date" value={form.scheduledDate} onChange={(e) => setForm((f) => ({...f, scheduledDate: e.target.value}))} className="input" required />
-              </div>
-              <div>
-                <label className="label">Description</label>
-                <textarea rows={2} value={form.description} onChange={(e) => setForm((f) => ({...f, description: e.target.value}))} className="input resize-none" placeholder="Describe the maintenance…" />
+                <label className="label">Maintenance Type *</label>
+                <input value={form.maintenanceType} onChange={(e) => setForm((f) => ({...f, maintenanceType: e.target.value}))} className="input" placeholder="e.g. Preventive, Corrective…" required />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="label">Estimated Cost ($)</label>
-                  <input type="number" value={form.cost} onChange={(e) => setForm((f) => ({...f, cost: e.target.value}))} className="input" placeholder="0" />
+                  <label className="label">Maintenance Date *</label>
+                  <input type="date" value={form.maintenanceDate} onChange={(e) => setForm((f) => ({...f, maintenanceDate: e.target.value}))} className="input" required />
                 </div>
                 <div>
-                  <label className="label">Status</label>
-                  <div className="relative">
-                    <select value={form.status} onChange={(e) => setForm((f) => ({...f, status: e.target.value}))} className="input appearance-none pr-8">
-                      {['Scheduled', 'In Progress', 'Completed'].map((s) => <option key={s}>{s}</option>)}
-                    </select>
-                    <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />
-                  </div>
+                  <label className="label">Cost ($)</label>
+                  <input type="number" value={form.cost} onChange={(e) => setForm((f) => ({...f, cost: e.target.value}))} className="input" placeholder="0" />
                 </div>
+              </div>
+              <div>
+                <label className="label">Service Provider</label>
+                <input value={form.serviceProvider} onChange={(e) => setForm((f) => ({...f, serviceProvider: e.target.value}))} className="input" placeholder="Vendor or technician name…" />
+              </div>
+              <div>
+                <label className="label">Notes</label>
+                <textarea rows={2} value={form.notes} onChange={(e) => setForm((f) => ({...f, notes: e.target.value}))} className="input resize-none" placeholder="Additional notes…" />
               </div>
               <div className="flex gap-3 justify-end pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                 <button type="button" onClick={() => setModalOpen(false)} className="btn-secondary">Cancel</button>
                 <button type="submit" disabled={saving} className="btn-primary">
                   {saving ? <svg className="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                  : <><Save size={15}/> Save</>}
+                  : <><Save size={15}/> Save</> }
                 </button>
               </div>
             </form>
@@ -509,7 +500,7 @@ function TransfersTab({ toast }) {
   const [loading, setLoading] = useState(true);
   const [assets, setAssets]   = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [form, setForm]       = useState({ asset: '', fromLocation: '', toLocation: '', transferDate: '', transferredBy: '' });
+  const [form, setForm]       = useState({ asset: '', currentLocation: '', newLocation: '', transferDate: '', transferredBy: '', approvedBy: '', remarks: '' });
   const [saving, setSaving]   = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
@@ -557,8 +548,8 @@ function TransfersTab({ toast }) {
                records.map((r) => (
                 <tr key={r._id}>
                   <td className="font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>{r.asset?.assetId ?? r.asset ?? '—'}</td>
-                  <td style={{ color: 'rgba(255,255,255,0.4)' }}>{r.fromLocation || '—'}</td>
-                  <td className="font-medium" style={{ color: 'rgba(255,255,255,0.75)' }}>{r.toLocation || '—'}</td>
+                  <td style={{ color: 'rgba(255,255,255,0.4)' }}>{r.currentLocation || '—'}</td>
+                  <td className="font-medium" style={{ color: 'rgba(255,255,255,0.75)' }}>{r.newLocation || '—'}</td>
                   <td>{fmtDate(r.transferDate)}</td>
                   <td style={{ color: 'rgba(255,255,255,0.4)' }}>{r.transferredBy || '—'}</td>
                   <td>
@@ -577,17 +568,16 @@ function TransfersTab({ toast }) {
       </div>
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setModalOpen(false)} />
-          <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-md p-6 animate-fade-in-up" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
-            <div className="flex items-center justify-between mb-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setModalOpen(false)}>
+          <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-md max-h-[90vh] overflow-y-auto animate-fade-in-up" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }} onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-6 pb-0">
               <h3 className="text-lg font-bold" style={{ color: 'rgba(255,255,255,0.9)' }}>Record Asset Transfer</h3>
               <button onClick={() => setModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors" style={{ color: 'rgba(255,255,255,0.35)' }}
                 onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.06)'; }}
                 onMouseLeave={e => { e.currentTarget.style.background=''; }}
               ><X size={17}/></button>
             </div>
-            <form onSubmit={handleSave} className="space-y-4">
+            <form onSubmit={handleSave} className="p-6 space-y-4">
               <div>
                 <label className="label">Asset</label>
                 <div className="relative">
@@ -599,18 +589,22 @@ function TransfersTab({ toast }) {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div><label className="label">From Location</label><input value={form.fromLocation} onChange={(e) => setForm((f) => ({...f, fromLocation: e.target.value}))} className="input" placeholder="e.g. HQ Floor 2" /></div>
-                <div><label className="label">To Location</label><input value={form.toLocation} onChange={(e) => setForm((f) => ({...f, toLocation: e.target.value}))} className="input" placeholder="e.g. Branch Office" required /></div>
+                <div><label className="label">Current Location *</label><input value={form.currentLocation} onChange={(e) => setForm((f) => ({...f, currentLocation: e.target.value}))} className="input" placeholder="e.g. HQ Floor 2" required /></div>
+                <div><label className="label">New Location *</label><input value={form.newLocation} onChange={(e) => setForm((f) => ({...f, newLocation: e.target.value}))} className="input" placeholder="e.g. Branch Office" required /></div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div><label className="label">Transfer Date</label><input type="date" value={form.transferDate} onChange={(e) => setForm((f) => ({...f, transferDate: e.target.value}))} className="input" required /></div>
-                <div><label className="label">Transferred By</label><input value={form.transferredBy} onChange={(e) => setForm((f) => ({...f, transferredBy: e.target.value}))} className="input" placeholder="Name" /></div>
+                <div><label className="label">Transfer Date *</label><input type="date" value={form.transferDate} onChange={(e) => setForm((f) => ({...f, transferDate: e.target.value}))} className="input" required /></div>
+                <div><label className="label">Transferred By *</label><input value={form.transferredBy} onChange={(e) => setForm((f) => ({...f, transferredBy: e.target.value}))} className="input" placeholder="Name" required /></div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="label">Approved By</label><input value={form.approvedBy} onChange={(e) => setForm((f) => ({...f, approvedBy: e.target.value}))} className="input" placeholder="Approver name" /></div>
+                <div><label className="label">Remarks</label><input value={form.remarks} onChange={(e) => setForm((f) => ({...f, remarks: e.target.value}))} className="input" placeholder="Optional…" /></div>
               </div>
               <div className="flex gap-3 justify-end pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                 <button type="button" onClick={() => setModalOpen(false)} className="btn-secondary">Cancel</button>
                 <button type="submit" disabled={saving} className="btn-primary">
                   {saving ? <svg className="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                  : <><Save size={15}/> Save</>}
+                  : <><Save size={15}/> Save</> }
                 </button>
               </div>
             </form>
@@ -628,7 +622,7 @@ function DisposalTab({ toast }) {
   const [loading, setLoading] = useState(true);
   const [assets, setAssets]   = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [form, setForm]       = useState({ asset: '', disposalDate: '', method: 'Sold', saleAmount: '', reason: '' });
+  const [form, setForm]       = useState({ asset: '', disposalDate: '', disposalMethod: 'Sale', disposalValue: '', approvedBy: '', reasonForDisposal: '' });
   const [saving, setSaving]   = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
@@ -668,7 +662,7 @@ function DisposalTab({ toast }) {
         <div className="table-wrapper">
           <table className="data-table">
             <thead>
-              <tr>{['Asset', 'Disposal Date', 'Method', 'Sale Amount', 'Reason', 'Actions'].map((h) => <th key={h}>{h}</th>)}</tr>
+              <tr>{['Asset', 'Disposal Date', 'Method', 'Value', 'Reason', 'Actions'].map((h) => <th key={h}>{h}</th>)}</tr>
             </thead>
             <tbody>
               {loading ? Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} cols={6} />) :
@@ -677,9 +671,9 @@ function DisposalTab({ toast }) {
                 <tr key={r._id}>
                   <td className="font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>{r.asset?.assetId ?? r.asset ?? '—'}</td>
                   <td>{fmtDate(r.disposalDate)}</td>
-                  <td><span className={r.method === 'Sold' ? 'badge-green' : r.method === 'Donated' ? 'badge-blue' : 'badge-red'}>{r.method}</span></td>
-                  <td>{fmt(r.saleAmount)}</td>
-                  <td className="max-w-[200px] truncate" style={{ color: 'rgba(255,255,255,0.4)' }}>{r.reason || '—'}</td>
+                  <td><span className={r.disposalMethod === 'Sale' ? 'badge-green' : r.disposalMethod === 'Donation' ? 'badge-blue' : 'badge-red'}>{r.disposalMethod}</span></td>
+                  <td>{fmt(r.disposalValue)}</td>
+                  <td className="max-w-[200px] truncate" style={{ color: 'rgba(255,255,255,0.4)' }}>{r.reasonForDisposal || '—'}</td>
                   <td>
                     <button onClick={() => setDeleteTarget(r)} className="w-8 h-8 rounded-lg flex items-center justify-center transition-all" style={{ color: 'rgba(255,255,255,0.3)' }}
                       onMouseEnter={e => { e.currentTarget.style.background='rgba(239,68,68,0.1)'; e.currentTarget.style.color='#f87171'; }}
@@ -696,17 +690,16 @@ function DisposalTab({ toast }) {
       </div>
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setModalOpen(false)} />
-          <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-md p-6 animate-fade-in-up" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }}>
-            <div className="flex items-center justify-between mb-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setModalOpen(false)}>
+          <div className="relative rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.5)] w-full max-w-md max-h-[90vh] overflow-y-auto animate-fade-in-up" style={{ background: '#0a1020', border: '1px solid rgba(255,255,255,0.07)' }} onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-6 pb-0">
               <h3 className="text-lg font-bold" style={{ color: 'rgba(255,255,255,0.9)' }}>Record Asset Disposal</h3>
               <button onClick={() => setModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors" style={{ color: 'rgba(255,255,255,0.35)' }}
                 onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.06)'; }}
                 onMouseLeave={e => { e.currentTarget.style.background=''; }}
               ><X size={17}/></button>
             </div>
-            <form onSubmit={handleSave} className="space-y-4">
+            <form onSubmit={handleSave} className="p-6 space-y-4">
               <div>
                 <label className="label">Asset</label>
                 <div className="relative">
@@ -718,24 +711,27 @@ function DisposalTab({ toast }) {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div><label className="label">Disposal Date</label><input type="date" value={form.disposalDate} onChange={(e) => setForm((f) => ({...f, disposalDate: e.target.value}))} className="input" required /></div>
+                <div><label className="label">Disposal Date *</label><input type="date" value={form.disposalDate} onChange={(e) => setForm((f) => ({...f, disposalDate: e.target.value}))} className="input" required /></div>
                 <div>
-                  <label className="label">Method</label>
+                  <label className="label">Method *</label>
                   <div className="relative">
-                    <select value={form.method} onChange={(e) => setForm((f) => ({...f, method: e.target.value}))} className="input appearance-none pr-8">
-                      {['Sold', 'Donated', 'Scrapped', 'Returned'].map((m) => <option key={m}>{m}</option>)}
+                    <select value={form.disposalMethod} onChange={(e) => setForm((f) => ({...f, disposalMethod: e.target.value}))} className="input appearance-none pr-8">
+                      {['Sale', 'Scrap', 'Donation'].map((m) => <option key={m}>{m}</option>)}
                     </select>
                     <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.25)' }} />
                   </div>
                 </div>
               </div>
-              <div><label className="label">Sale Amount ($)</label><input type="number" value={form.saleAmount} onChange={(e) => setForm((f) => ({...f, saleAmount: e.target.value}))} className="input" placeholder="0.00" /></div>
-              <div><label className="label">Reason</label><textarea rows={2} value={form.reason} onChange={(e) => setForm((f) => ({...f, reason: e.target.value}))} className="input resize-none" placeholder="Why is this asset being disposed?" /></div>
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="label">Disposal Value ($)</label><input type="number" value={form.disposalValue} onChange={(e) => setForm((f) => ({...f, disposalValue: e.target.value}))} className="input" placeholder="0.00" /></div>
+                <div><label className="label">Approved By</label><input value={form.approvedBy} onChange={(e) => setForm((f) => ({...f, approvedBy: e.target.value}))} className="input" placeholder="Approver name" /></div>
+              </div>
+              <div><label className="label">Reason for Disposal *</label><textarea rows={2} value={form.reasonForDisposal} onChange={(e) => setForm((f) => ({...f, reasonForDisposal: e.target.value}))} className="input resize-none" placeholder="Why is this asset being disposed?" required /></div>
               <div className="flex gap-3 justify-end pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                 <button type="button" onClick={() => setModalOpen(false)} className="btn-secondary">Cancel</button>
                 <button type="submit" disabled={saving} className="btn-primary">
                   {saving ? <svg className="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                  : <><Save size={15}/> Save</>}
+                  : <><Save size={15}/> Save</> }
                 </button>
               </div>
             </form>
