@@ -10,10 +10,15 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ─── API Routes (mount here as they are created) ─────────────────────────────
-// app.use('/api/employees',  require('./routes/employeeRoutes'));
+// ─── API Routes ───────────────────────────────────────────────────────────────
+const employeeRoutes = require('./routes/employeeRoutes');
+const assetRoutes    = require('./routes/assetRoutes');
+
+app.use('/api/employees', employeeRoutes);
+app.use('/api/assets',    assetRoutes);
+
+// Uncomment as additional routes are built:
 // app.use('/api/payroll',    require('./routes/payrollRoutes'));
-// app.use('/api/assets',     require('./routes/assetRoutes'));
 // app.use('/api/maintenance',require('./routes/assetMaintenanceRoutes'));
 // app.use('/api/transfers',  require('./routes/assetTransferRoutes'));
 // app.use('/api/disposals',  require('./routes/assetDisposalRoutes'));
