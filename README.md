@@ -297,7 +297,7 @@ Please follow the existing code style and ensure your changes don't break the bu
 
 <div align="center">
 
-Made with ❤️, ☕, and lots of "Why isn't this working?" followed by "Why is this working?!".
+Made with tears, ☕, and continuous "It works on my machine" validations.
 
 ⭐ **Star this repo** if you found it useful (or if you feel my pain)!
 
